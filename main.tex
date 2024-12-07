@@ -25,29 +25,29 @@ In fact, as formulated by \citet{burtscheidtBilevelLinearOptimization2020}, this
 In other words, the result is a bilevel problem in which the upper-level makes a here-and-now decision (prior to the realization of the random variable), while the lower-level makes a wait-and-see decisions (after the realization of the random variable).
 
 The overarching goal of this project is to study bilevel stochastic linear problems.
-The proposed approach is to perform a thought experiment on two textbook examples: the news vendor problem~\citep{birgeIntroductionStochasticProgramming2011,shapiroLecturesStochasticProgramming2009} and the multiproduct assembly problem~\citep{shapiroLecturesStochasticProgramming2009}.
+The proposed approach is to perform a thought experiment on two textbook examples: the newsvendor problem~\citep{birgeIntroductionStochasticProgramming2011,shapiroLecturesStochasticProgramming2009} and the multiproduct assembly problem~\citep{shapiroLecturesStochasticProgramming2009}.
 For both problems, the starting point will be to assume that the two decisions (first-stage and second-stage) are \emph{not} made by the same agent, and, thus, the two stages have distinct objective functions.
 This assumption changes the problem formulation from a two-stage recourse problem, to a bilevel stochastic linear problem. 
 Furthermore, I will consider a risk-averse scenario, for which the traditional assumption that the upper-level agent is optimizing the expected value is a particular case (as the expectation is a coherent risk measure).
 
 I aim to study optimality conditions of bilevel stochastic linear problems and reformulations that lead to exact algorithms, which will be greatly supported by the theoretical results from \citet{burtscheidtRiskAverseModelsBilevel2020}.
 The authors have provided general results for this class of problems, which I plan to present in greater detail while considering the specificities of the two selected problems.
-Note that the choice of the problems is well-thought, as the theoretical results of \citet{burtscheidtRiskAverseModelsBilevel2020} only apply to problems in which the random variable appears in the right-hand side of the lower-level constraints\footnote{In subsequent works~\citep{clausExistenceSolutionsClass2022,clausContinuityRiskaverseBilevel2021}, the results have been generalized to problems in which the random variable is present in the lower level's objective function as well. However, to the best of my knowledge, the same level of theoretical results have not yet been shown to problems in which the technology matrix (left-hand side) of the lower level is stochastic, which precludes the use of, for example, the farmer's problem in the proposed thought experiments.}.
+Note that the choice of the problems is well-thought, as the theoretical results of \citet{burtscheidtRiskAverseModelsBilevel2020} only apply to problems in which the random variable appears in the right-hand side of the lower-level constraints\footnote{In subsequent works~\citep{clausExistenceSolutionsClass2022a,clausContinuityRiskaverseBilevel2021}, the results have been generalized to problems in which the random variable is present in the lower level's objective function as well. However, to the best of my knowledge, the same level of theoretical results have not yet been shown to problems in which the technology matrix (left-hand side) of the lower level is stochastic, which precludes the use of, for example, the farmer's problem in the proposed thought experiments.}.
 
 \section*{The News Vendor Problem}
 
-The news vendor problem is the problem of deciding how many products (in here, newspapers) to buy before the demand is known.
+The newsvendor problem is the problem of deciding how many products (in here, newspapers) to buy before the demand is known.
 Following most of the notation from \citet{birgeIntroductionStochasticProgramming2011}, the vendor decides to buy $x$ amount of newspaper. 
 After this acquisition, the product can be sold up to a certain amount, the demand $z$.
 The leftover newspaper, if any, is returned at a lower price.
-Formally, the problem is formulated as
+Formally, the problem is formulated as a parametric problem
 \begin{equation}\label{eq:deterministic-2sp-ul}
 \begin{split}
-    \min_{x} \quad & c x + Q(x,z) \\
+    \min_{x} \quad & f(x,z) = c x + Q(x,z) \\
     \textrm{s.t.} \quad & 0\le x\le u
 ,\end{split}
 \end{equation}
-in which $c$ is the acquisition cost, and $u$ is the capacity of the news vendor of carrying newspaper.
+in which $c$ is the acquisition cost, and $u$ is the capacity of the newsvendor of carrying newspaper.
 The other cost component $Q(x,z)$ is the cost of selling the newspaper, which comprises the second-stage decision of the amount of newspaper to be sold $y$ and the amount of newspaper to be returned $w$, given the demand $z$.
 The formulation of the second-stage is
 \begin{equation}\label{eq:deterministic-2sp-ll}
@@ -62,20 +62,20 @@ in which $q$ is the selling price and $r$ is the return price.
 % Note that, although the physical quantity "amount of newspaper" is a natural number, the problem is formulated as a continuous linear program and the integrality of the result is assured because all parameters are assumed to be integer-valued.
 
 
-% The news vendor problem, following mostly the notation from \citet{birgeIntroductionStochasticProgramming2011}, can be stated in its deterministic form, i.e., assuming the demand is a known parameter $z$, 
+% The newsvendor problem, following mostly the notation from \citet{birgeIntroductionStochasticProgramming2011}, can be stated in its deterministic form, i.e., assuming the demand is a known parameter $z$, 
 % Let me start by stating the original newsvendor problem in its deterministic version, i.e., assuming the demand is a parameter $z$.
 % Then, mostly following the notation from \citet{birgeIntroductionStochasticProgramming2011}, the problem of deciding how much newspaper to buy can be formulated as
 % in which $x$, the decision variable, is the amount of newspaper, $u$ is the amount available, and 
 % is the sales cost (negative profit), in which $y$ is the amount of newspaper sold at price $q$ and $w$ is the amount of newspaper returned at price $r$.
 
 To take into account the randomness of the demand, we assume it is not a parameter, but rather a random variable $z=Z(\omega)$, where $\omega$ belongs to a probability space $(\Omega,\mathcal{F},\mathbb{P})$.
-Therefore, the news vendor problem becomes a traditional two-stage stochastic programming problem with recourse
+Therefore, the newsvendor problem becomes a traditional two-stage stochastic programming problem with recourse
 \begin{align*}
-    \min_{x} \quad & cx + \mathbb{E}\left[ Q(x,Z(\omega)) \right]  \\
+    \min_{x} \quad & \mathbb{E}\left[ f(x,Z(\omega)) \right] = cx + \mathbb{E}\left[ Q(x,Z(\omega)) \right]  \\
     \textrm{s.t.} \quad & 0\le x\le u
 .\end{align*}
 Note that the above, following \citet{birgeIntroductionStochasticProgramming2011}, assumes a risk-neutral position of the upper-level agent.
-However, the problem could more generally be formulated with any risk measure $\mathcal{R}: \mathcal{X} \longrightarrow \R$, where $\mathcal{X}$ is a linear subspace of $L^{0}(\Omega, \mathcal{F},\mathbb{P})$, the space of all measurable random variables.
+However, the problem could more generally be formulated with any risk measure $\mathcal{R}: \mathcal{X} \longrightarrow \R$, where $\mathcal{X}$ is a linear subspace of $L^{0}(\Omega, \mathcal{F},\mathbb{P})$, the space of all measurable random variables, such that $f(x,Z(\omega)) \in \mathcal{X} \forall 0\le x\le u$.
 
 
 \section*{The Multiproduct Assembly Problem}
@@ -83,9 +83,9 @@ However, the problem could more generally be formulated with any risk measure $\
 Suppose an assembly plant that produces $n$ products, and each product requires zero or more of $m$ distinct parts.
 The plant manager has to decide the amount $\bm{x}=(x_1,\ldots,x_{m})$ of parts to order before knowing how many products will be demanded by the customers.
 After the demand of each product $\bm{d}=(d_1,\ldots,d_n)$ is known, there is still a decision on which products will be assembled and sold, given the current stock of parts.
-Following (mostly) the notation of \citet{shapiroLecturesStochasticProgramming2009}, the problem can be defined as
+Following (mostly) the notation of \citet{shapiroLecturesStochasticProgramming2009}, the parametric problem can be defined as
 \begin{align*}
-    \min_{\bm{x}} \quad & \bm{c}^{T} \bm{x} + Q(\bm{x}, \bm{d}) \\
+    \min_{\bm{x}} \quad & f(\bm{x},\bm{d}) = \bm{c}^{T} \bm{x} + Q(\bm{x}, \bm{d}) \\
     \textrm{s.t.} \quad & 0 \le \bm{x} \le \bm{u}
 ,\end{align*}
 where $\bm{c}=(c_1,\ldots,c_m)$ is the vector of acquisition costs of each part, while $Q(x,d)$ is the second-stage problem of deciding which products to assemble and how many of each.
@@ -93,59 +93,132 @@ Precisely,
 \begin{align*}
     Q(\bm{x},\bm{d}) = \min_{\bm{y},\bm{w}} \quad & -\bm{q}^{T} \bm{y} - \bm{r}^{T}\bm{w} \\
     \textrm{s.t.} \quad & A\bm{y} + \bm{w} \le \bm{x} \\
-      & 0 \le \bm{y} \le \bm{d}, \, \bm{w} \ge 0
+      & \bm{y} \le \bm{d} \\
+      & \bm{y} \ge 0,\, \bm{w} \ge 0
 ,\end{align*}
 where $y_i$ is the amount of product $i$ assembled, that is sold at a price $q_i$, $w_j$ is the amount of part $j$ that remains and is salvaged at a price $r_j$, and each entry $a_{ij}$ of matrix $A$ indicates the amount of part $j$ that is required to assemble product $i$.
 
-Once again, modeling the demand as a random variable $D(\omega)$ renders the two-stage problem
+Once again, modeling the demand vector as a random variable $D(\omega)$ renders the two-stage problem
 \begin{align*}
-    \min_{x} \quad & \bm{c}^{T} \mathcal{R}\left[  \bm{x} + Q(\bm{x},D(\omega)) \right]  \\
+    \min_{x} \quad & \mathcal{R}\left[ f(\bm{x},D(\omega)) \right]  \\
     \textrm{s.t.} \quad & 0\le \bm{x} \le \bm{u}
 ,\end{align*}
 which is now presented with a risk measure $\mathcal{R}$.
 
 
+\section*{Risk-Averse Two-Stage Linear Programming}
+
+Both the newsvendor and the multiproduct assembly problems fall into the category of two-stage stochastic linear programs with fixed recourse and fixed technology matrix~(cf. \cite[Sec.~3.1]{birgeIntroductionStochasticProgramming2011}, and \cite[Sec.~2.1]{shapiroLecturesStochasticProgramming2009}).
+In other words, in the risk-neutral scenario, they are special cases of the general problem
+\begin{align*}
+    \min_{\bm{x}} \quad & \bm{c}^{T}\bm{x} + \mathbb{E}\left[ Q(\bm{x},Z(\omega)) \right]  \\
+    \textrm{s.t.} \quad & A\bm{x} = \bm{b} \\
+      & \bm{x} \ge 0
+,\end{align*}
+in which 
+\begin{align*}
+    Q(\bm{x},\bm{z}) = \min_{\bm{y}} \quad & \bm{q}^{T}\bm{y} \\
+    \textrm{s.t.} \quad & W\bm{y} \le T\bm{x} + \bm{z} \\
+      & \bm{y} \ge 0
+.\end{align*}
+Note that the original formulations of both \citet{birgeIntroductionStochasticProgramming2011} and \citet{shapiroLecturesStochasticProgramming2009} consider equality constraints on the second stage, which are equivalent to the formulation with inequalities above through the addition of slack variables.
+Furthermore, I also consider a fixed second-stage cost, as is the case of both problems of interest.
+
+In a risk-averse setting, as was already briefly discussed in the problems' presentation, the objective function of the general problem is considered to be a risk measure over the upper-level cost~\citep{noyanRiskaverseTwostageStochastic2012,millerRiskAverseTwoStageStochastic2011,ahmedConvexityDecompositionMeanrisk2006}.
+Formally, the objective becomes $\mathcal{R}\left[ f_\text{SP}(\bm{x},Z(\omega)) \right]x $, where $f_{\text{SP}}(\bm{x},\bm{z}) = \bm{c}^{T}\bm{x} + Q(\bm{x},\bm{z})$, and $\mathcal{R}: \mathcal{X} \longrightarrow \R$ is a risk measure over a linear subspace of all $\mathcal{F}$-measurable random variables in $\left( \Omega, \mathcal{F},\mathbb{P} \right)$, containing the random variables $f_\text{SP}(\bm{x},Z)$ for every feasible $\bm{x}$.
+A common risk measure (see \citet{noyanRiskaverseTwostageStochastic2012}) is the combination of the expectation and a dispersion statistic $\mathbb{D}$, resulting in a mean-risk minimization problem
+\begin{align*}
+    \min_{\bm{x}} \quad & \mathbb{E}\left[ f_\text{SP}(\bm{x},Z(\omega)) \right] + \lambda \mathbb{D}\left[ f_\text{SP}(\bm{x},Z(\omega)) \right] \\
+    \textrm{s.t.} \quad & A\bm{x} = \bm{b} \\
+      & \bm{x} \ge 0
+,\end{align*}
+where $\lambda$ is a weighting factor.
+I note, for completion, that the operator $\mathcal{R} = \mathbb{E} + \lambda \mathbb{D}$ fits the previous definition of risk measure.
+
 \section*{Bilevel Stochastic Linear Programming}
 
+In contrast to two-stage problems, bilevel stochastic linear problems~\citep{burtscheidtBilevelLinearOptimization2020} are formulated in their parametric form as
+\begin{align*}
+% \min_{\bm{x}} \quad & \mathcal{R}\left[ \bm{c}^{T}\bm{x} + \min_{\bm{y}}\left\{ \bm{q}_u^{T}\bm{y} : \bm{y} \in \Psi(\bm{x},Z(\omega)) \right\} \right]  \\
+\min_{\bm{x}} \quad & f_\text{BL}(\bm{x},\bm{z}) = \bm{c}^{T}\bm{x} + \min_{\bm{y}}\left\{ \bm{q}_u^{T}\bm{y} : \bm{y} \in \Psi(\bm{x},\bm{z}) \right\}  \\
+    \textrm{s.t.} \quad & \bm{x} \in X
+,\end{align*}
+where $X$ is a nonempty polyhedron and
+\begin{align*}
+    \Psi(\bm{x}, \bm{z}) = \arg\min_{\bm{y}} \quad & \bm{q}_l^{T} \bm{y} \\
+    \textrm{s.t.} \quad & W\bm{y} \le T\bm{x} + \bm{z}
+\end{align*}
+is the set of all optimal solutions of the lower level problem.
+Note that an optimistic formulation is considered, which is equivalent to saying that the lower-level agent favors the upper-level whenever that does not affect the lower-level objective. 
+
+Replacing the parameter vector $\bm{z}$ by the random variable $Z(\omega)$ leads to a formulation similar to that of the two-stage general problem in the risk-averse scenario:
+\begin{align*}
+    \min_{\bm{x}} \quad & \mathcal{R}\left[ f_\text{BL}(\bm{x},Z(\omega)) \right]  \\
+    \textrm{s.t.} \quad & \bm{x} \in X
+.\end{align*}
+
+The similarities between the two classes of problems are certainly larger than their differences.
+Both problems model sequential decision-making, and consider the realization of the random variable between the first and the second decision.
+A significant difference, however, lies in the coordination of both stages.
+Where two-stages problem assume that the second-stage objective is precisely the quantity of interest for the first-stage agent, bilevel stochastic problems consider more general cases, in which both levels have different objectives with respect to the decision variable $\bm{y}$.
+In fact, the bilevel problem reduces to a two-stage problem whenever $\bm{q}_u = \bm{q}_l$.
+
+The differences render new challenges for deriving optimality conditions of bilevel stochastic linear problems.
+Such is extensively demonstrated in the work of \citet{burtscheidtRiskAverseModelsBilevel2020}, which were the first to achieve such results for the risk-averse bilevel problem considered in this work, that is, with the random variable showing only on the right-hand side of the lower level.
+The authors achieved these results by proving the Lipschitzian properties of the upper-level cost function, assuming the equivalent of complete recourse for the bilevel case.
+Then, they show that the continuity properties of the risk measure $\mathcal{R}$ translate to $\mathcal{R}\left[ f_\text{BL}(\bm{x},Z(\omega)) \right] $, which leads to optimality conditions for problems with convex risk measures.
+In fact, the authors even show single-level reformulations for problems with random variables under discrete distributions and commonly used risk measures, which enables the use of traditional exact algorithms.
+Finally, further work extended these results to problems where the random variable and the upper-level variable appear quadratically in the lower-level objective function~\cite{clausContinuityRiskaverseBilevel2021,clausExistenceSolutionsClass2022a}.
 
 
 \section*{Objectives}
 
+In this work, I will assume a variation of the newsvendor and the multiproduct assembly problems that results in risk-averse bilevel stochastic linear programming formulations.
+With this, I aim to study such bilevel problems taking as a start position the results for two-stage stochastic problems with recourse seen in class. 
+Furthermore, having classic textbook problems at hand will help me to provide the results from \citet{burtscheidtRiskAverseModelsBilevel2020} in greater detail by guiding the assumptions made and contextualizing the proofs.
+I expect to unravel the known results with respect to optimality conditions and investigate their proofs thoroughly, leading to an analysis of reformulations given common risk measures and the exact algorithms that might be appropriate for them.
 
-It is easy to see that news vendor and the multiproduct assembly problems are very similar.
+I believe the choice of problems is particularly suitable for the thought experiments.
+Not only because these problems fit the lower-level definition of \citet{burtscheidtBilevelLinearOptimization2020} with respect to the influence of the random variable, but also because of both problems are very similar.
 In fact, the original notation from \citet{shapiroLecturesStochasticProgramming2009} was purposefully modified to highlight such similarities.
-The multiproduct assembly can be seen as a multidimensional version of the former problem, while adding tying constraints to the second-stage $y$ variables.
-So much, that the resulting two-stage problem of the multiproduct assembly 
+The multiproduct assembly can be seen as a multidimensional version of the newsvendor problem, while adding tying constraints to the second-stage $y$ variables.
+On top of that, the known analytical solution for the second stage of the newsvendor problems reduces most of the results to trivialities, which serves as a bridge between the theory for two-stage stochastic programming and the results for bilevel stochastic linear problems.
+In other words, I believe the investigation of the newsvendor problem in its bilevel version will serve as an introduction for the more complex differences that exist between the traditional mutliproduct assembly product and its proposed bilevel variation.
+
+In face of the above, my proposed objectives for this final project are:
+\paragraph{Formulate a variation of the newsvendor and the multiproduct assembly problems}
+Adapt two classical two-stage stochastic programming problems into bilevel formulations with risk-aversion, assuming that the two stages are managed by different agents with distinct objectives.
+\paragraph{Investigate optimality existence given commonly used risk measures}
+Apply the results from \citet{burtscheidtRiskAverseModelsBilevel2020} to prove the existence of optimal solutions for the expectation, the value-at-risk and the conditional value-at-risk as risk measures, re-stating the fundamental theorems while providing further details on the proofs and the implications of the structures in each problem.
+\paragraph{Investigate optimality conditions}
+Investigate the differentiability of both problems given the three risk measures, which leads to necessary optimality conditions in terms of directional derivatives and the application of gradient-based solution algorithms.
+\paragraph{Derive reformulations for finite discrete distributions}
+Formulate the two problems under the three risk measures as (deterministic) bilevel linear problems, which can be solved by incorporating the lower-level KKT conditions in the upper level.
+
+Although achieving the above objectives do not require any novel result, the expected results are not straightforward guaranteed by \citet{burtscheidtRiskAverseModelsBilevel2020}.
+This is because the main theorems and lemmas have several nuances with respect to the components of the problem.
+An example of such is the partial randomness of the right-hand side of both problems' lower-level, which implies that the probability measure is not absolutely continuous w.r.t. the Lebesgue measure, a condition whose absence may preclude the applicability of the differentiability results (cf. \cite[Sec.~4]{burtscheidtRiskAverseModelsBilevel2020}).
+Therefore, it may be the case that some of the results expected require potentially novel results, which is out of the scope of this project.
 
 
-
-
-
-
-
-
-\section*{zzz}
-
-
-
-In this work, I will assume a slight variation of the original newsvendor problem in which the lower-level decision is made by a different agent, with a different objective.
-Instead of \eqref{eq:deterministic-2sp-ul}, we have, then,
-\begin{equation}\label{eq:deterministic-bilevel-ul}
-\begin{split}
-    \min_{x} \quad & cx + \min\left\{ -q_u y -r_u w : (y,w)\in \Psi(x,z) \right\}  \\
-    \textrm{s.t.} \quad & 0\le x\le u
-,\end{split}
-\end{equation}
-in which $\Psi(x,z)$ represents the set of solutions to the lower-level problem, that is,
-\begin{equation}\label{eq:deterministic-bilevel-ll}
-\begin{split}
-    \Psi(x,z) = \arg\min_{y,w} \quad & -q_l y - r_l w \\
-    \textrm{s.t.} \quad & y\le z \\
-      & y+w \le x \\
-      & y,w \ge 0
-.\end{split}
-\end{equation}
-Note that the costs differ, that is, the selling and returning costs for the upper level are $q_u$ and $r_u$, resp., while they are $q_l$ and $r_l$ for the lower level.
+% In this work, I will assume a slight variation of the original newsvendor problem in which the lower-level decision is made by a different agent, with a different objective.
+% Instead of \eqref{eq:deterministic-2sp-ul}, we have, then,
+% \begin{equation}\label{eq:deterministic-bilevel-ul}
+% \begin{split}
+%     \min_{x} \quad & cx + \min\left\{ -q_u y -r_u w : (y,w)\in \Psi(x,z) \right\}  \\
+%     \textrm{s.t.} \quad & 0\le x\le u
+% ,\end{split}
+% \end{equation}
+% in which $\Psi(x,z)$ represents the set of solutions to the lower-level problem, that is,
+% \begin{equation}\label{eq:deterministic-bilevel-ll}
+% \begin{split}
+%     \Psi(x,z) = \arg\min_{y,w} \quad & -q_l y - r_l w \\
+%     \textrm{s.t.} \quad & y\le z \\
+%       & y+w \le x \\
+%       & y,w \ge 0
+% .\end{split}
+% \end{equation}
+% Note that the costs differ, that is, the selling and returning costs for the upper level are $q_u$ and $r_u$, resp., while they are $q_l$ and $r_l$ for the lower level.
 
 
 
