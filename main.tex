@@ -139,7 +139,7 @@ This means that, in face of the probability space $\left( \Omega,\mathcal{F},\ma
 In other words, if $\left\{ \omega_1,\omega_2,\ldots \right\}\in \Omega$ is such that $z_i=Z(\omega_i)$, for each $i=1,2,\ldots$, then $\mu_Z(\left\{ z_1,z_2,\ldots \right\} = \mathbb{P}\left\{ \omega_1,\omega_2,\ldots \right\}$.
 I will write this relationship as $\mu_Z = \mathbb{P} \circ Z^{-1}$, following \citet{burtscheidtBilevelLinearOptimization2020}.
 In the following, I will always assume that $\mu_Z$ has finite moments of order $p\in [1,\infty)$, which is equivalent to saying that $Z \in L^{p}\left( \Omega, \mathcal{F},\mathbb{P} \right)$ or \[
-    \mathbb{E}[|Z|^{p}] = \int_{\R_{+}} |z|^{p} \mu(dz) < \infty
+    \mathbb{E}[|Z|^{p}] = \int_{\R_{+}} |z|^{p} \mu_Z(dz) < \infty
 .\]
 
 It is easy to see that $F(x)$ is Lipschitz continuous.
@@ -161,16 +161,71 @@ Furthermore, because $F(x)$ is also monotonic, then the composition will be conv
 Therefore, gradient-based methods are exact algorithms for this problem and will (likely) return globally optimal solutions.
 
 Of course, the above results are unnecessary for the risk-neutral case, as one can much more easily derive analytical solutions (cf. \citet[Chapter~1.e]{birgeIntroductionStochasticProgramming2011} and \citet[Chapter~1.2.1]{shapiroLecturesStochasticProgramming2009}).
-For the value-at-risk, let us write
+On the other hand, the results are perfectly suitable for the case of the Conditional Value-at-Risk, which is, in fact, a coherent risk measure.
+For the Value-at-Risk, one can use \citet[Theorem~2]{ivanovBilevelStochasticLinear2014} to show that it is also a continuous risk measure on the image of $F(x)$, and, thus, a solution to the problem exists.
+To the best of my knowledge, there is no result ensuring differentiability of the Value-at-Risk with respect to the problem variable $x$.
+However, we can see that
+\begin{align*}
+    \mathbb{P}[ f(x,Z) \le \eta] &= \int_{\R_{+}} 1[f(x,z) \le \eta] \mu_Z(dz) \\
+    &= \int_{0}^{x} 1[f(x,z) \le \eta] \mu_Z(dz) + \int_{x}^{\infty} 1[f(x,z) \le \eta] \mu_Z(dz) \\
+    &= \int_{0}^{x} 1[(c-r)x - (q-r)z \le \eta] \mu_Z(dz) + \int_{x}^{\infty} 1[(c-q)x \le \eta] \mu_Z(dz) \\
+    &= \int_{0}^{x} 1[z \ge ((c-r)x - \eta) / (q-r)] \mu_Z(dz) + 1[(c-q)x \le \eta] \int_{x}^{\infty} \mu_Z(dz) \\
+    &= 1[(c-q)x \le \eta] \int_{\max\{((c-r)x - \eta) / (q-r),0\}}^{x} \mu_Z(dz) + 1[(c-q)x \le \eta] \int_{x}^{\infty} \mu_Z(dz) \\
+    &= 1[(c-q)x \le \eta] \int_{\max\{((c-r)x - \eta) / (q-r),0\}}^{\infty} \mu_Z(dz) \\
+    &= \begin{cases}
+	1 &,\, \eta \ge (c-r)x  \\
+	\int_{((c-r)x - \eta) / (q-r)}^{\infty} \mu_Z(dz)  &,\, (c-q)x \le \eta \le  (c-r)x \\
+	0  &,\, \eta \le (c-q)x
+    \end{cases}
+.\end{align*}
+Thus, for $\alpha \in (0,1]$, we have 
 \begin{align*}
     \text{VaR}_{\alpha}[F(x)] &= \inf_{\eta}\left\{ \eta \in \R : \mathbb{P}[ F(x) \le \eta] \ge \alpha  \right\} \\
     &= \inf_{\eta}\left\{ \eta \in \R : \mathbb{P}[ f(x,Z) \le \eta] \ge \alpha  \right\} \\
-.\end{align*} 
-For the conditional value-at-ri
+    &= \inf_{\eta}\left\{ \eta \in [(c-q)x,(c-r)x] : \int_{((c-r)x - \eta) / (q-r)}^{\infty} \mu_Z(dz) \ge \alpha   \right\}
+,\end{align*} 
+which, if we assume $Z$ has a smooth CDF, implies that $\text{VaR}_\alpha \circ F$ is differentiable through a simple application of the implicit function theorem\footnote{This is due to $\text{VaR}[F(x)]$ being formulated as a minimization (as the infimum is achieved) that is equivalent to solving $\int_{((c-r)x - \eta) / (q-r)}^{\infty} \mu_Z(dz) - \alpha = 0$.}.
 
-The 
 
-Then, if $\mathcal{R}$ is convex and monotonic, 
+\section*{The Multiproduct Assembly Problem}
+
+
+\subsection*{Previous stuff}
+
+\textcolor{red}{ADAPT FROM NEWSVENDOR:}
+The first interesting property to analyse, even before introducing the random variable, is that of the function $f$.
+\begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.1]\label{lemma:f-lip-cont}
+    Function $f$ is real-valued and Lipschitz continuous $\forall x,z \ge 0$.
+\end{lemma}
+\begin{proof}
+    % The dual of \eqref{eq:newsvendor-ll} is 
+    % \begin{equation}\label{eq:newsvendor-ll-dual}
+    % \begin{split}
+    %     \min_{u_z, u_x} \quad & z u_z + x u_x \\
+    %     \textrm{s.t.} \quad & u_z + u_x \ge -q_l \\
+    %       & u_x \ge -r_l \\
+    %       & u_z,u_x \ge 0
+    % .\end{split}
+    % \end{equation}
+    It is easy to see that $\forall x,z \ge 0$, the lower-level problem is feasible, and, thus, a solution to the minimization problem in $f(x,z)$ exists, which renders $f(x,z)$ a real-valued function.
+    % Furthermore, the lower-level cost is a continuous function of the parameters (within $x,z \ge 0$)~\citep{pistikopoulosMultiparametricOptimizationControl2021}.
+
+    Now, to demonstrate Lipschitz continuity, take any $x,z,x',z' \ge 0$ such that $f(x,z)\ge f(x',z')$.
+    Then, take $(y',w') \in \Psi(x',z')$, which means that $f(x',z') = cx' - q_uy' -r_uw'$, and, thus, for any $(y,w) \in \Psi(x,z)$.
+    On top of that, by \citet[Theorem~4.2]{klatteErrorBoundsSolutions1995}, we have that every point $(y',w')\in \Psi(x',z')$ can be expressed as \[
+	(y',w') = (y,w) + \Lambda \| (x,z)-(x',z') \| e
+    \] for some $(y,w) \in \Psi(x,z)$, a vector $e \in \mathbb{R}^{2}$ with $\|e\|\le 1$, and some constant $\Lambda > 0$.
+    Thus, assuming that $c\ge 0$ (which is indeed expected, as it represents a cost),
+    \begin{align*}
+	|f(x,z)-f(x',z')| &= f(x,z) - cx' + q_uy' + r_uw' \\
+			  &\le cx - q_u y - r_u w  - cx' + q_uy' + r_uw' \\
+			  &\le  c |x-x'| + \|(q_u,r_u)\| \|(y,w)-(y',w')\| \\
+			  &\le  c |x-x'| + \|(q_u,r_u)\| \Lambda \| (x,z)-(x',z') \| \|e\| \\
+			  &\le  L_f \| (x,z)-(x',z') \|
+    ,\end{align*}
+    where $L_f = c + \Lambda \|(q_u,r_u)\|$.
+\end{proof}
+
 
 Furthermore, the random variable $F(x)$ is convex, as for any realization $Z(\omega)$, \[
     f(x,Z(\omega)) = \begin{cases}
@@ -209,43 +264,6 @@ This allows me to reformulate the result that presents the Lipschitz continuity 
 	&\le \left( \int_{\R^{+}} L_f^{p} |x - x'|^{p}\mu_Z(dz) \right)^{1 / p} = L_f |x-x'|
     .\end{align*}
 \end{proof}
-
-\section*{The Multiproduct Assembly Problem}
-
-\textcolor{red}{ADAPT FROM NEWSVENDOR:}
-The first interesting property to analyse, even before introducing the random variable, is that of the function $f$.
-\begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.1]\label{lemma:f-lip-cont}
-    Function $f$ is real-valued and Lipschitz continuous $\forall x,z \ge 0$.
-\end{lemma}
-\begin{proof}
-    % The dual of \eqref{eq:newsvendor-ll} is 
-    % \begin{equation}\label{eq:newsvendor-ll-dual}
-    % \begin{split}
-    %     \min_{u_z, u_x} \quad & z u_z + x u_x \\
-    %     \textrm{s.t.} \quad & u_z + u_x \ge -q_l \\
-    %       & u_x \ge -r_l \\
-    %       & u_z,u_x \ge 0
-    % .\end{split}
-    % \end{equation}
-    It is easy to see that $\forall x,z \ge 0$, the lower-level problem is feasible, and, thus, a solution to the minimization problem in $f(x,z)$ exists, which renders $f(x,z)$ a real-valued function.
-    % Furthermore, the lower-level cost is a continuous function of the parameters (within $x,z \ge 0$)~\citep{pistikopoulosMultiparametricOptimizationControl2021}.
-
-    Now, to demonstrate Lipschitz continuity, take any $x,z,x',z' \ge 0$ such that $f(x,z)\ge f(x',z')$.
-    Then, take $(y',w') \in \Psi(x',z')$, which means that $f(x',z') = cx' - q_uy' -r_uw'$, and, thus, for any $(y,w) \in \Psi(x,z)$.
-    On top of that, by \citet[Theorem~4.2]{klatteErrorBoundsSolutions1995}, we have that every point $(y',w')\in \Psi(x',z')$ can be expressed as \[
-	(y',w') = (y,w) + \Lambda \| (x,z)-(x',z') \| e
-    \] for some $(y,w) \in \Psi(x,z)$, a vector $e \in \mathbb{R}^{2}$ with $\|e\|\le 1$, and some constant $\Lambda > 0$.
-    Thus, assuming that $c\ge 0$ (which is indeed expected, as it represents a cost),
-    \begin{align*}
-	|f(x,z)-f(x',z')| &= f(x,z) - cx' + q_uy' + r_uw' \\
-			  &\le cx - q_u y - r_u w  - cx' + q_uy' + r_uw' \\
-			  &\le  c |x-x'| + \|(q_u,r_u)\| \|(y,w)-(y',w')\| \\
-			  &\le  c |x-x'| + \|(q_u,r_u)\| \Lambda \| (x,z)-(x',z') \| \|e\| \\
-			  &\le  L_f \| (x,z)-(x',z') \|
-    ,\end{align*}
-    where $L_f = c + \Lambda \|(q_u,r_u)\|$.
-\end{proof}
-
 
 
 
