@@ -72,7 +72,7 @@ Note that if we assume that $\mathcal{R}$ is translation invariant (which is a c
 In this work, I will assume a slight variation of the original newsvendor problem in which the lower-level decision is made by a different agent, with a different objective.
 This may represent, for example, a scenario in which the newspaper acquisition is made by a middle-man, which has different selling and return margins than the newspaper salesperson. 
 Instead of \eqref{eq:deterministic-2sp-ul}, we have, then,
-\begin{equation}\label{eq:deterministic-bilevel-ul}
+\begin{equation}\label{eq:newsvendor-ul}
 \begin{split}
     \min_{x} \quad & f(x,z) = cx + \min\left\{ -q_u y -r_u w : (y,w)\in \Psi(x,z) \right\}  \\
     \textrm{s.t.} \quad & 0\le x\le u
@@ -89,6 +89,130 @@ in which $\Psi(x,z)$ represents the set of solutions to the lower-level problem,
 \end{equation}
 Note that the costs differ, that is, the selling and returning costs for the upper level are $q_u$ and $r_u$, resp., while they are $q_l$ and $r_l$ for the lower level.
 
+There is, however, an analytic solution to the second stage~\citep{birgeIntroductionStochasticProgramming2011} that assumes the selling price is strictly higher than the return price.
+More precisely, assuming $q_l > r_l$, the optimal solution to \eqref{eq:newsvendor-ll} can be written
+\begin{align}\label{eq:newsvendor-analytic-solution}
+    y^{*}(x,z) &= \min\{x,z\} \\
+    w^{*}(x,z) &= \max\{x-z, 0\}
+,\end{align}
+as long as the problem is feasible, i.e., $\forall x,z \ge 0$.
+In other words, $\Psi(x,z)$ is a singleton with  $(\min\{x,z\},\max\{x-z, 0\})$.
+Thus, the upper-level cost can be written
+\begin{equation}\label{eq:newsvendor-analytic-ul-cost}
+    f(x,z) = cx -q_u \min\{x,z\} - r_u \max\{x-z, 0\}
+.\end{equation}
+
+The difference arises, for example, if the second stage decision-maker does not have any incentive to sell the newspapers instead of returning them (e.g., no sales commision), in which case $q_l = r_l$ and the optimal solutions are
+\begin{equation*}
+\begin{split}
+    \Psi(x,z) &= \left\{ (y,w)\in \R^2_{+} : y+w = x, y\le z \right\} \\
+	      &= \left\{ (y,w)\in \R^2_{+} : y \in \left[ 0,z \right] , w = \max\{x-y,0\} \right\} 
+\end{split}
+.\end{equation*}
+Under the optimistic assumption, the solution that minimizes the upper-level cost is also \eqref{eq:newsvendor-analytic-solution}, as it is a feasible solution that achieves the optimal cost for the lower-level.
+
+Let us consider now the extreme case $q_l < r_l$, for example, the sales commission is inferior to the cost of selling, implying that simply returning the newspaper is the more profitable choice.
+Thus, the optimal solution is simply $y^{*}=0$ and $w^{*}=x$, $\forall x,z\ge 0$, which is completely independent of the actual demand.
+The upper-level cost becomes $f(x,z) = (c - r_u) x$, which, of course, has an optimal solution at  $x=0$\footnote{That is, assuming $c< r_u$, a purchase cost smaller than the return cost, as the opposite would be nonsensical given the problem's context.}.
+
+At this point, it would be natural to investigate the domain of $f(x,z)$ and its continuity properties.
+It is clear in all scenarios that $\text{dom} f = \R^{2}_{+}$, as that renders both lower-level and the upper-level feasible, i.e., the problem has a property similar to complete recourse.
+For $q_l \ge r_l$, Eq. \eqref{eq:newsvendor-analytic-ul-cost} shows that the upper-level cost function is continuously differentiable almost everywhere with respect to the Lebesgue measure, that is, $f$ has continuous derivatives except at $\left\{ (x,z) \in \R^2_{+} : x = z \right\}$, which has null Lebesgue measure.
+
+
+\subsection*{The Bilevel Stochastic Newsvendor}
+
+As for the two-stage problem, given a random demand $Z$ and a risk measure $\mathcal{R}$, our bilevel newsvendor is interested in solving
+\begin{equation}
+\begin{split}
+    \min_{x} \quad & \mathcal{R}[F(x)] \\
+    \textrm{s.t.} \quad & 0\le x\le u
+,\end{split}
+\end{equation}
+where $F(x)=f(x,Z)$ is a random variable parameterized by the upper-level decision $x$.
+
+I recall that the only case worth investigating here is $q_l \ge r_l$, as otherwise the problem is demand independent, and for that case, the changes from the two-stage variant problem are negligible.
+Nevertheless, before we dive in the properties of the random variable $F(x)$ and the cost function $\mathcal{R}[F(x)]$, it is necessary to lay out some definitions about $Z$.
+
+Let $\mu_Z$ be the Borel probability measure induced by $Z$.
+This means that, in face of the probability space $\left( \Omega,\mathcal{F},\mathbb{P} \right)$, the probability that $\mu_Z$ associates to a given set $\left\{ z_1,z_2,\ldots \right\} $ of demand values is equal to the probability of the subset of $\Omega$ that contains the respective realization values. 
+In other words, if $\left\{ \omega_1,\omega_2,\ldots \right\}\in \Omega$ is such that $z_i=Z(\omega_i)$, for each $i=1,2,\ldots$, then $\mu_Z(\left\{ z_1,z_2,\ldots \right\} = \mathbb{P}\left\{ \omega_1,\omega_2,\ldots \right\}$.
+I will write this relationship as $\mu_Z = \mathbb{P} \circ Z^{-1}$, following \citet{burtscheidtBilevelLinearOptimization2020}.
+In the following, I will always assume that $\mu_Z$ has finite moments of order $p\in [1,\infty)$, which is equivalent to saying that $Z \in L^{p}\left( \Omega, \mathcal{F},\mathbb{P} \right)$ or \[
+    \mathbb{E}[|Z|^{p}] = \int_{\R_{+}} |z|^{p} \mu(dz) < \infty
+.\]
+
+It is easy to see that $F(x)$ is Lipschitz continuous.
+In fact, $F(x)$ is also convex, as for any realization $Z(\omega)$, \[
+    f(x,Z(\omega)) = \begin{cases}
+	(c-r)x - (q-r)Z(\omega) &,\, x \ge Z(\omega) \\
+	(c-q)x &,\, x < Z(\omega) \\
+    \end{cases}
+\] and $(c-q) \ge (c-r)$.
+Furthermore, we can see that $\forall x\ge 0$, $F(x)$ has finite moments of order $p\in [1,\infty)$, as $|f(x,z)| \le (c-r)x$, which leads to
+\begin{align*}
+    \mathbb{E}[|F(x)|^{p}] &= \mathbb{E}[|f(x,Z)|^{p}] = \int_{\R_{+}} |f(x,z)|^{p} \mu_Z(dz) \\
+    &\le  (c-r)^{p} x^{p} \int_{\R_{+}} \mu_Z(dz) < \infty
+.\end{align*}
+
+Because $F(x)\in L^{p}\left( \Omega, \mathcal{F},\mathbb{P} \right)$, any real-valued $\mathcal{R}$ that is both convex and monotonic will be continuous and subdifferentiable on the image of $F(x)$~\citep[Proposition~6.5]{shapiroLecturesStochasticProgramming2009}.
+This and the convexity of $F(x)$ allow, in turn, to state that $\mathcal{R}\circ F$ is directionally differentiable at the problem domain~\citet[Theorem~6.10]{shapiroLecturesStochasticProgramming2009}.
+Furthermore, because $F(x)$ is also monotonic, then the composition will be convex whenever $\mathcal{R}$ is convex.
+Therefore, gradient-based methods are exact algorithms for this problem and will (likely) return globally optimal solutions.
+
+Of course, the above results are unnecessary for the risk-neutral case, as one can much more easily derive analytical solutions (cf. \citet[Chapter~1.e]{birgeIntroductionStochasticProgramming2011} and \citet[Chapter~1.2.1]{shapiroLecturesStochasticProgramming2009}).
+For the value-at-risk, let us write
+\begin{align*}
+    \text{VaR}_{\alpha}[F(x)] &= \inf_{\eta}\left\{ \eta \in \R : \mathbb{P}[ F(x) \le \eta] \ge \alpha  \right\} \\
+    &= \inf_{\eta}\left\{ \eta \in \R : \mathbb{P}[ f(x,Z) \le \eta] \ge \alpha  \right\} \\
+.\end{align*} 
+For the conditional value-at-ri
+
+The 
+
+Then, if $\mathcal{R}$ is convex and monotonic, 
+
+Furthermore, the random variable $F(x)$ is convex, as for any realization $Z(\omega)$, \[
+    f(x,Z(\omega)) = \begin{cases}
+	(c-r)x - (q-r)Z(\omega) &,\, x \ge Z(\omega) \\
+	(c-q)x &,\, x < Z(\omega) \\
+    \end{cases}
+\] and $(c-q) \ge (c-r)$.
+Thus, if $\mathcal{R}$ is convex and monotonic, then $\mathcal{R}[F(x)]$ is convex~\citep[Proposition~6.8]{shapiroLecturesStochasticProgramming2009}.
+
+More precisely, the problem is equivalent to the two-stage problem with $q=q_u$ and $r=r_u$, so the known properties hold.
+
+
+
+This allows me to reformulate the result that presents the Lipschitz continuity of $F(x)$ for the bilevel newsvendor problem.
+
+\begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.4\footnote{Except the case for probability measures with finite moments of order $p=\infty$.}] 
+    If $\mu_Z$ has finite moments of order $p\in [1,\infty)$, then $\exists L>0$ such that \[
+	\|F(x) - F(x')\|_p \le L |x - x'|,\quad \forall x,x' \ge 0
+    ,\] i.e., $F(x)$ is Lipschitz continuous with respect to the $L^p$-norm $\|F(x)\|_p = \mathbb{E}[|F(x)|^{p}]^{1 / p}$.
+\end{lemma}
+\begin{proof}
+    First, note that, given Lemma~\ref{lemma:f-lip-cont}, $\forall x \ge 0$
+    \begin{align*}
+	\left( \|F(x)\|_p \right)^{p} &= \int_{\R^+} |f(x,z)|^{p} \mu_Z(dz)  \\
+	&= \int_{\R^+} |f(x,z) - f(0,0) + f(0,0)|^{p} \mu_Z(dz)  \\
+	&\le  \int_{\R^+} |f(x,z) - f(0,0)|^{p} + |f(0,0)|^{p} \mu_Z(dz)  \\
+	&=  |f(0,0)|^{p} + \int_{\R^+} |f(x,z) - f(0,0)|^{p} \mu_Z(dz) \\
+	&\le |f(0,0)|^{p} + \int_{\R^+} L_f^{p} \|(x,z)\|^{p} \mu_Z(dz) \\
+	&\le |f(0,0)|^{p} + L_f^{p} \int_{\R^+} \|x\|^{p} + \|z\|^{p} \mu_Z(dz) \\
+	&= |f(0,0)|^{p} + L_f^{p} \|x\|^{p} + L_f^{p} \int_{\R^+}\|z\|^{p} \mu_Z(dz) < \infty
+    ,\end{align*}
+    as $\mu_Z$ has finite moments of order $p$.
+    Then, $\forall x,x'\ge 0$,
+    \begin{align*}
+        \|F(x) - F(x')\|_{p} &= \left( \int_{\R^{+}} |f(x',z) - f(x,z)|^{p}\mu_Z(dz) \right)^{1 / p} \\ 
+	&\le \left( \int_{\R^{+}} L_f^{p} |x - x'|^{p}\mu_Z(dz) \right)^{1 / p} = L_f |x-x'|
+    .\end{align*}
+\end{proof}
+
+\section*{The Multiproduct Assembly Problem}
+
+\textcolor{red}{ADAPT FROM NEWSVENDOR:}
 The first interesting property to analyse, even before introducing the random variable, is that of the function $f$.
 \begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.1]\label{lemma:f-lip-cont}
     Function $f$ is real-valued and Lipschitz continuous $\forall x,z \ge 0$.
@@ -122,43 +246,7 @@ The first interesting property to analyse, even before introducing the random va
     where $L_f = c + \Lambda \|(q_u,r_u)\|$.
 \end{proof}
 
-\subsection*{The Bilevel Stochastic Newsvendor}
 
-As for the two-stage problem, given a random demand $Z$ and a risk measure $\mathcal{R}$, our bilevel newsvendor is interested in solving
-\begin{equation}
-\begin{split}
-    \min_{x} \quad & \mathcal{R}[F(x)] \\
-    \textrm{s.t.} \quad & 0\le x\le u
-,\end{split}
-\end{equation}
-where $F(x)=f(x,Z)$ is a random variable parameterized by the upper-level decision $x$.
-
-Before we dive in the properties of the random variable $F(x)$, it is necessary to lay out some definitions about $Z$.
-Let $\mu_Z$ be the Borel probability measure induced by $Z$.
-This means that, in face of the probability space $\left( \Omega,\mathcal{F},\mathbb{P} \right)$, the probability that $\mu_Z$ associates to a given set $\left\{ z_1,z_2,\ldots \right\} $ of demand values is equal to the probability of the subset of $\Omega$ that contains the respective realization values. 
-In other words, if $\left\{ \omega_1,\omega_2,\ldots \right\}\in \Omega$ is such that $z_i=Z(\omega_i)$, for each $i=1,2,\ldots$, then $\mu_Z(\left\{ z_1,z_2,\ldots \right\} = \mathbb{P}\left\{ \omega_1,\omega_2,\ldots \right\}$.
-I will write this relationship as $\mu_Z = \mathbb{P} \circ Z^{-1}$, following \citet{burtscheidtBilevelLinearOptimization2020}.
-
-This allows me to reformulate the result that presents the Lipschitz continuity of $F(x)$ for the bilevel newsvendor problem.
-
-\begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.4\footnote{Except the case for probability measures with finite moments of order $p=\infty$.}] 
-    If $\mu_Z$ has finite moments of order $p\in [1,\infty)$, then $\exists L>0$ such that \[
-	\|F(x) - F(x')\|_p \le L |x - x'|,\quad \forall x,x' \ge 0
-    ,\] i.e., $F(x)$ is Lipschitz continuous with respect to the $L^p$-norm $\|F(x)\|_p = \mathbb{E}[|F(x)|^{p}]^{1 / p}$.
-\end{lemma}
-\begin{proof}
-    First, note that, given Lemma~\ref{lemma:f-lip-cont}, $\forall x \ge 0$
-    \begin{align*}
-	\left( \|F(x)\|_p \right)^{p} &= \int_{\R^+} |f(x,z)|^{p} \mu_Z(dz)  \\
-	&= \int_{\R^+} |f(x,z) - f(0,0) + f(0,0)|^{p} \mu_Z(dz)  \\
-	&\le  \int_{\R^+} |f(x,z) - f(0,0)|^{p} + |f(0,0)|^{p} \mu_Z(dz)  \\
-	&=  |f(0,0)|^{p} + \int_{\R^+} |f(x,z) - f(0,0)|^{p} \mu_Z(dz) \\
-	&\le |f(0,0)|^{p} + \int_{\R^+} L_f^{p} \|(x,z)\|^{p} \mu_Z(dz) \\
-	&\le |f(0,0)|^{p} + L_f^{p} \int_{\R^+} \|x\|^{p} + \|z\|^{p} \mu_Z(dz) \\
-	&= |f(0,0)|^{p} + L_f^{p} \|x\|^{p} + L_f^{p} \int_{\R^+}\|z\|^{p} \mu_Z(dz) < \infty
-    ,\end{align*}
-    as $\mu_Z$ has finite moments of order $p$.
-\end{proof}
 
 
 
