@@ -59,13 +59,13 @@ The problem is parameterized by the acquisition cost $c$, the newspaper capacity
 The traditional two-stage formulation comes from assuming that the demand comes from a random variable $z=Z(\omega)$, where  $\omega$ belongs to a probability space $(\Omega, \mathcal{F},\mathbb{P})$.
 Furthermore, it is assumed that the realization of the random variable happens after the first decision (w.r.t. $x$), and before the second decision (w.r.t. $y$ and $w$).
 Then, given a risk measure $\mathcal{R}: \mathcal{X} \longrightarrow \R$, where $\mathcal{X}$ is a linear subspace of all $\mathcal{F}$-measurable random variables, the two-stage problem becomes
-\begin{equation}
+\begin{equation}\label{eq:two-stage}
 \begin{split}
     \min_{x} \quad & \mathcal{R}[c x + Q(x,Z)] \\
     \textrm{s.t.} \quad & 0\le x\le u
 .\end{split}
 \end{equation}
-Note that if we assume that $\mathcal{R}$ is translation invariant (which is a common property to expect, e.g., variance, value-at-risk), then $\mathcal{R}[c x + Q(x,Z)] = cx + \mathcal{R}[Q(x,Z)]$, which is true, for example, in the risk-neutral case $\mathcal{R} = \mathbb{E}$.
+Note that if we assume that $\mathcal{R}$ is translation invariant, then $\mathcal{R}[c x + Q(x,Z)] = cx + \mathcal{R}[Q(x,Z)]$, which is true in the risk-neutral case $\mathcal{R} = \mathbb{E}$, but also for the value-at-risk and the conditional value-at-risk.
 
 \subsection*{A Bilevel Variant}
 
@@ -116,7 +116,7 @@ Thus, the optimal solution is simply $y^{*}=0$ and $w^{*}=x$, $\forall x,z\ge 0$
 The upper-level cost becomes $f(x,z) = (c - r_u) x$, which, of course, has an optimal solution at  $x=0$\footnote{That is, assuming $c< r_u$, a purchase cost smaller than the return cost, as the opposite would be nonsensical given the problem's context.}.
 
 At this point, it would be natural to investigate the domain of $f(x,z)$ and its continuity properties.
-It is clear in all scenarios that $\text{dom} f = \R^{2}_{+}$, as that renders both lower-level and the upper-level feasible, i.e., the problem has a property similar to complete recourse.
+It is clear in all scenarios that $\text{dom} f = \R^{2}_{+}$, as that renders both lower-level and the upper-level feasible, i.e., the problem has a property similar to relative complete recourse.
 For $q_l \ge r_l$, Eq. \eqref{eq:newsvendor-analytic-ul-cost} shows that the upper-level cost function is continuously differentiable almost everywhere with respect to the Lebesgue measure, that is, $f$ has continuous derivatives except at $\left\{ (x,z) \in \R^2_{+} : x = z \right\}$, which has null Lebesgue measure.
 
 
@@ -148,16 +148,20 @@ In fact, $F(x)$ is also convex, as for any realization $Z(\omega)$, \[
 	(c-r)x - (q-r)Z(\omega) &,\, x \ge Z(\omega) \\
 	(c-q)x &,\, x < Z(\omega) \\
     \end{cases}
-\] and $(c-q) \ge (c-r)$.
-Furthermore, we can see that $\forall x\ge 0$, $F(x)$ has finite moments of order $p\in [1,\infty)$, as $|f(x,z)| \le (c-r)x$, which leads to
+\] and $(c-q) \ge (c-r)$, i.e., the slope of $f(x,Z(\omega))$ increases with $x$ for any $\omega \in \Omega$.
+Furthermore, we can see that $\forall x\ge 0$, $\mu_{F(x)}$ has finite moments of order $p\in [1,\infty)$, as $|f(x,z)| \le (c-r)x$, which leads to
 \begin{align*}
     \mathbb{E}[|F(x)|^{p}] &= \mathbb{E}[|f(x,Z)|^{p}] = \int_{\R_{+}} |f(x,z)|^{p} \mu_Z(dz) \\
     &\le  (c-r)^{p} x^{p} \int_{\R_{+}} \mu_Z(dz) < \infty
-.\end{align*}
+,\end{align*}
+thus implying that $F(x) \in L^{p}\left(\Omega, \mathcal{F}, \mathbb{P}\right)$
 
-Because $F(x)\in L^{p}\left( \Omega, \mathcal{F},\mathbb{P} \right)$, any real-valued $\mathcal{R}$ that is both convex and monotonic will be continuous and subdifferentiable on the image of $F(x)$~\citep[Proposition~6.5]{shapiroLecturesStochasticProgramming2009}.
-This and the convexity of $F(x)$ allow, in turn, to state that $\mathcal{R}\circ F$ is directionally differentiable at the problem domain~\citet[Theorem~6.10]{shapiroLecturesStochasticProgramming2009}.
-Furthermore, because $F(x)$ is also monotonic, then the composition will be convex whenever $\mathcal{R}$ is convex.
+Let us now assume $\mathcal{R}$ is convex and monotonic.
+Then, for any $x,x'>0$, and any $t\in [0,1]$, we use the convexity of $F(x)$ and the monotonicity of $\mathcal{R}$ to see that \[
+    \mathcal{R}[F(tx + (1-t)x')] \le \mathcal{R}[tF(x) + (1-t)F(x')]
+,\] which, because $\mathcal{R}$ is also convex, shows that $\mathcal{R} \circ F$ is also convex.
+Now, by \citep[Proposition~6.5]{shapiroLecturesStochasticProgramming2009}, we know that if $\mathcal{R}$ is convex and monotonic, it will be continuous and subdifferentiable on $L^{p}\left( \Omega, \mathcal{F},\mathbb{P} \right)$.
+This, together with the previous result that $F(x)$ is Lipschitz continuous and that its domain ($\R_+$) is compact, leads us to applying \citet[Theorem~6.10]{shapiroLecturesStochasticProgramming2009} to see that $\mathcal{R} \circ F$ is directionally differentiable and its derivative has finite values.
 Therefore, gradient-based methods are exact algorithms for this problem and will (likely) return globally optimal solutions.
 
 Of course, the above results are unnecessary for the risk-neutral case, as one can much more easily derive analytical solutions (cf. \citet[Chapter~1.e]{birgeIntroductionStochasticProgramming2011} and \citet[Chapter~1.2.1]{shapiroLecturesStochasticProgramming2009}).
@@ -189,13 +193,57 @@ which, if we assume $Z$ has a smooth CDF, implies that $\text{VaR}_\alpha \circ 
 
 \section*{The Multiproduct Assembly Problem}
 
+As in the preliminary report\footnote{In the preliminary report, I used $\bm{d}$ to refer to the problem parameter, which I here decided to use $\bm{z}$ for consistency with respect to the newsvendor problem.}, the multiproduct assembly problem is, here, as
+\begin{align*}
+    \min_{\bm{x}} \quad & f(\bm{x},\bm{z}) = \bm{c}^{T} \bm{x} + Q(\bm{x}, \bm{z}) \\
+    \textrm{s.t.} \quad & 0 \le \bm{x} \le \bm{u}
+,\end{align*}
+in which
+\begin{align*}
+    Q(\bm{x},\bm{z}) = \min_{\bm{y},\bm{w}} \quad & -\bm{q}^{T} \bm{y} - \bm{r}^{T}\bm{w} \\
+    \textrm{s.t.} \quad & A^{T}\bm{y} + \bm{w} \le \bm{x} \\
+      & \bm{y} \le \bm{z} \\
+      & \bm{y}, \bm{w} \ge 0
+.\end{align*}
+Note here we have \emph{vector} decision variables $\bm{x}=(x_1,\ldots,x_m)$, $\bm{y}=(y_1,\ldots,y_{n})$, and $\bm{w}=(w_1,\ldots,w_m)$.
+Each $x_{j}$ and $w_j$ represent the amount of each part $j$ that was bought and that remained, resp., while each $y_{i}$ represents the amount of product $i$ that was assembled.
+The external parameters $\bm{z}=(z_1,\ldots,z_n)$ represent the demand for each of the $n$ products that can be assembled.
+Finally, at the first stage,  $\bm{c}$ and $\bm{u}$ are the acquisition cost and the storage capacity for the parts, and at the second stage $\bm{q}$ and $\bm{r}$ are the sales price of the products and the recycling price of the parts, while in $A=[a_{ij}]$, $a_{ij}$ is the amount of part $j$ required to build product $i$.
 
-\subsection*{Previous stuff}
+As for the newsvendor problem, if we assume an uncertain demand modeled as the realization of a random variable $\bm{z} = Z(\omega)$, where $\omega$ belongs to a probability space $\left( \Omega, \mathcal{F}, \mathbb{P} \right)$, the two-stage problem is formulated very similarly to \eqref{eq:two-stage}
+\begin{equation}\label{eq:two-stage-ndim}
+\begin{split}
+    \min_{\bm{x}} \quad & \mathcal{R}[\bm{c}^{T}\bm{x} + Q(\bm{x},Z)] \\
+    \textrm{s.t.} \quad & 0\le \bm{x}\le \bm{u}
+.\end{split}
+\end{equation}
+However, I highlight that, despite using the same notation, for the multiproduct assembly problem $Z(\omega)\in \R^{n}_{+}$.
 
-\textcolor{red}{ADAPT FROM NEWSVENDOR:}
-The first interesting property to analyse, even before introducing the random variable, is that of the function $f$.
+\subsection*{A Bilevel Variant}
+
+Once again, the consideration that the second-stage decision is made by a different agent is used to yield a bilevel problem.
+In here, this may represent, for example, the dynamics between a supplier (first stage) and a manufacturer (second stage).
+The bilevel variant can be written
+\begin{equation}\label{eq:multiproduct-ul}
+\begin{split}
+    \min_{\bm{x}} \quad & f(\bm{x},\bm{z}) = \bm{c}^{T}\bm{x} + \min\left\{ -\bm{q}^{T}_u \bm{y} -\bm{r}^{T}_u \bm{w} : (\bm{y},\bm{w})\in \Psi(\bm{x},\bm{z}) \right\}  \\
+    \textrm{s.t.} \quad & 0\le \bm{x}\le \bm{u}
+,\end{split}
+\end{equation}
+in which
+\begin{equation}\label{eq:multiproduct-ll}
+\begin{split}
+    \Psi(\bm{x},\bm{z}) = \arg\min_{\bm{y},\bm{w}} \quad & -\bm{q}_l \bm{y} - \bm{r}_l \bm{w} \\
+    \textrm{s.t.} \quad & A^{T}\bm{y}+\bm{w} \le \bm{x} \\
+      & \bm{y}\le \bm{z} \\
+      & \bm{y},\bm{w} \ge 0
+.\end{split}
+\end{equation}
+
+For the multiproduct assembly problem there is no analytic solution such as the one for the newsvendor problem.
+Therefore, the first interesting property to analyse on the bilevel variant, even before introducing the random variable, is that of the continuity of function $f$.
 \begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.1]\label{lemma:f-lip-cont}
-    Function $f$ is real-valued and Lipschitz continuous $\forall x,z \ge 0$.
+    Function $f$ is real-valued and Lipschitz continuous on $\R^{m+n}_{+}$.
 \end{lemma}
 \begin{proof}
     % The dual of \eqref{eq:newsvendor-ll} is 
@@ -207,63 +255,111 @@ The first interesting property to analyse, even before introducing the random va
     %       & u_z,u_x \ge 0
     % .\end{split}
     % \end{equation}
-    It is easy to see that $\forall x,z \ge 0$, the lower-level problem is feasible, and, thus, a solution to the minimization problem in $f(x,z)$ exists, which renders $f(x,z)$ a real-valued function.
+    It is easy to see that $\forall \left( \bm{x},\bm{z} \right) \in \R^{m+n}_{+}$ the lower-level problem is feasible, e.g., through the naïve assignment $(\overline{\bm{y}},\overline{\bm{w}})=(0,\bm{x})$.
+    Also, the lower-level is also bounded, as $\bm{x}$ and $\bm{z}$ are, resp., upper-bounds for $\bm{w}$ and $\bm{y}$.
+    As a consequence, the minimization problem in $f(\bm{x},\bm{z})$ exists (i.e., is well-defined), which renders $f(\bm{x},\bm{z})$ a real-valued function, or, equivalently, $\text{dom} f = \R^{m+n}_{+}$.
     % Furthermore, the lower-level cost is a continuous function of the parameters (within $x,z \ge 0$)~\citep{pistikopoulosMultiparametricOptimizationControl2021}.
 
-    Now, to demonstrate Lipschitz continuity, take any $x,z,x',z' \ge 0$ such that $f(x,z)\ge f(x',z')$.
-    Then, take $(y',w') \in \Psi(x',z')$, which means that $f(x',z') = cx' - q_uy' -r_uw'$, and, thus, for any $(y,w) \in \Psi(x,z)$.
-    On top of that, by \citet[Theorem~4.2]{klatteErrorBoundsSolutions1995}, we have that every point $(y',w')\in \Psi(x',z')$ can be expressed as \[
-	(y',w') = (y,w) + \Lambda \| (x,z)-(x',z') \| e
-    \] for some $(y,w) \in \Psi(x,z)$, a vector $e \in \mathbb{R}^{2}$ with $\|e\|\le 1$, and some constant $\Lambda > 0$.
-    Thus, assuming that $c\ge 0$ (which is indeed expected, as it represents a cost),
+    Now, to demonstrate Lipschitz continuity, take any $(\bm{x},\bm{z}),(\bm{x}',\bm{z}') \in \R^{m+n}_{+}$ and assume, without loss of generalization, that $f(\bm{x},\bm{z})\ge f(\bm{x}',\bm{z}')$.
+    Then, take $(\bm{y}',\bm{w}') \in \Psi(\bm{x}',\bm{z}')$ such that $f(\bm{x}',\bm{z}') =  \bm{c}^{T}\bm{x}' - \bm{q}_u \bm{y}' -\bm{r}_u \bm{w}'$.
+    Parametric programming theory \citep[Lemma~4.1]{klatteErrorBoundsSolutions1995} gives us that for every point $(\bm{y}',\bm{w}')\in \Psi(\bm{x}',\bm{z}')$, there exists $\Lambda > 0$ such that for any other point $(\bm{y},\bm{w})\in \Psi(\bm{x},\bm{z})$ \[
+	(\bm{y}',\bm{w}') = (\bm{y},\bm{w}) + \Lambda \| (\bm{x},\bm{z})-(\bm{x}',\bm{z}') \| \bm{e}
+    \] for some a vector $\bm{e} \in \mathbb{R}^{m+n}$ with $\|\bm{e}\|\le 1$.
+    % Thus, assuming that $c\ge 0$ (which is indeed expected, as it represents a cost),, and, thus,
+    Thus, for any $(\bm{y},\bm{w}) \in \Psi(\bm{x},\bm{z})$,
     \begin{align*}
-	|f(x,z)-f(x',z')| &= f(x,z) - cx' + q_uy' + r_uw' \\
-			  &\le cx - q_u y - r_u w  - cx' + q_uy' + r_uw' \\
-			  &\le  c |x-x'| + \|(q_u,r_u)\| \|(y,w)-(y',w')\| \\
-			  &\le  c |x-x'| + \|(q_u,r_u)\| \Lambda \| (x,z)-(x',z') \| \|e\| \\
-			  &\le  L_f \| (x,z)-(x',z') \|
+	|f(\bm{x},\bm{z})-f(\bm{x}',\bm{z}')| &= f(\bm{x},\bm{z}) - \bm{c}^{T}\bm{x}' + \bm{q}_u^{T} \bm{y}' + \bm{r}_u^{T} \bm{w}' \\
+			  &\le \bm{c}^{T} \bm{x} - \bm{q}_u^{T} \bm{y} - \bm{r}_u^{T} \bm{w}  - \bm{c}^{T}\bm{x}' + \bm{q}_u^{T} \bm{y}' + \bm{r}_u^{T} \bm{w}' \\
+			  &\le  \|\bm{c}\| \|\bm{x}-\bm{x}'\| + \|(\bm{q}_u,\bm{r}_u)\| \|(\bm{y},\bm{w})-(\bm{y}',\bm{w}')\| \\
+			  &\le  \|\bm{c}\| \|\bm{x}-\bm{x}'\| + \|(\bm{q}_u,\bm{r}_u)\| \Lambda\|(\bm{x},\bm{z})-(\bm{x}',\bm{z}')\| \|\bm{e}\| \\
+			  &\le  L_f \|(\bm{x},\bm{z})-(\bm{x}',\bm{z}')\|
     ,\end{align*}
-    where $L_f = c + \Lambda \|(q_u,r_u)\|$.
+    where $L_f = \|\bm{c}\| + \Lambda \|(\bm{q}_u,\bm{r}_u)\|$.
 \end{proof}
 
+\subsection*{The Bilevel Stochastic Multiproduct Assembly}
 
-Furthermore, the random variable $F(x)$ is convex, as for any realization $Z(\omega)$, \[
-    f(x,Z(\omega)) = \begin{cases}
-	(c-r)x - (q-r)Z(\omega) &,\, x \ge Z(\omega) \\
-	(c-q)x &,\, x < Z(\omega) \\
-    \end{cases}
-\] and $(c-q) \ge (c-r)$.
-Thus, if $\mathcal{R}$ is convex and monotonic, then $\mathcal{R}[F(x)]$ is convex~\citep[Proposition~6.8]{shapiroLecturesStochasticProgramming2009}.
+Knowing that the deterministic problem is solvable let's us wander into the stochastic version of the problem.
+Recall that it is assumed here, just as for the two-stage variant, that the demand is the realization of the random variable $Z$, which happens prior to the lower-level decision.
+Furthermore, I consider here a risk-averse problem, such that, given a risk measure $\mathcal{R}$ as previously, the problem of interest is
+\begin{equation}\label{eq:multiprod-bis-prob}
+\begin{split}
+    \min_{\bm{x}} \quad & \mathcal{R}[F(\bm{x})] \\
+    \textrm{s.t.} \quad & 0\le \bm{x}\le \bm{u}
+,\end{split}
+\end{equation}
+where $F(\bm{x})=f(\bm{x},Z)$ is a random variable parameterized by the upper-level decision $\bm{x}$.
+Note that $F(\bm{x})$ is well-defined as any upper-level decision $\bm{x}\in \R^{m}_{+}$ renders the lower-level feasible.
 
-More precisely, the problem is equivalent to the two-stage problem with $q=q_u$ and $r=r_u$, so the known properties hold.
-
-
-
-This allows me to reformulate the result that presents the Lipschitz continuity of $F(x)$ for the bilevel newsvendor problem.
-
-\begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.4\footnote{Except the case for probability measures with finite moments of order $p=\infty$.}] 
+As for the newsvendor problem, let $\mu_Z$ be the Borel probability measure induced by Z.
+I will assume that $\mu_Z$ has finite moments of order $p\in [1,\infty)$, i.e., $Z \in L^{p}(\Omega,\mathcal{F},\mathbb{P})$.
+This allows me to state the Lipschitz continuity of the random variable $F(\bm{x})$.
+\begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.4\footnote{Except the case for probability measures with finite moments of order $p=\infty$.}]\label{lemma:F-lip-cont}
     If $\mu_Z$ has finite moments of order $p\in [1,\infty)$, then $\exists L>0$ such that \[
-	\|F(x) - F(x')\|_p \le L |x - x'|,\quad \forall x,x' \ge 0
-    ,\] i.e., $F(x)$ is Lipschitz continuous with respect to the $L^p$-norm $\|F(x)\|_p = \mathbb{E}[|F(x)|^{p}]^{1 / p}$.
+	\|F(\bm{x}) - F(\bm{x}')\|_p \le L \|\bm{x} - \bm{x}'\|,\quad \forall \bm{x},\bm{x}' \in \R^{m}_{+}
+    ,\] i.e., $F(\bm{x})$ is Lipschitz continuous with respect to the $L^p$-norm $\|F(\bm{x})\|_p = \mathbb{E}[|F(\bm{x})|^{p}]^{1 / p}$.
 \end{lemma}
 \begin{proof}
-    First, note that, given Lemma~\ref{lemma:f-lip-cont}, $\forall x \ge 0$
+    First, note that, given Lemma~\ref{lemma:f-lip-cont}, $\forall \bm{x} \in \R^{m}_{+}$
     \begin{align*}
-	\left( \|F(x)\|_p \right)^{p} &= \int_{\R^+} |f(x,z)|^{p} \mu_Z(dz)  \\
-	&= \int_{\R^+} |f(x,z) - f(0,0) + f(0,0)|^{p} \mu_Z(dz)  \\
-	&\le  \int_{\R^+} |f(x,z) - f(0,0)|^{p} + |f(0,0)|^{p} \mu_Z(dz)  \\
-	&=  |f(0,0)|^{p} + \int_{\R^+} |f(x,z) - f(0,0)|^{p} \mu_Z(dz) \\
-	&\le |f(0,0)|^{p} + \int_{\R^+} L_f^{p} \|(x,z)\|^{p} \mu_Z(dz) \\
-	&\le |f(0,0)|^{p} + L_f^{p} \int_{\R^+} \|x\|^{p} + \|z\|^{p} \mu_Z(dz) \\
-	&= |f(0,0)|^{p} + L_f^{p} \|x\|^{p} + L_f^{p} \int_{\R^+}\|z\|^{p} \mu_Z(dz) < \infty
+	\left( \|F(\bm{x})\|_p \right)^{p} &= \int_{\R^{n}_{+}} |f(\bm{x},\bm{z})|^{p} \mu_Z(d\bm{z})  \\
+	&= \int_{\R^{n}_{+}} |f(\bm{x},\bm{z}) - f(0,0) + f(0,0)|^{p} \mu_Z(d\bm{z})  \\
+	&\le  \int_{\R^{n}_{+}} |f(0,0)|^{p} + |f(\bm{x},\bm{z}) - f(0,0)|^{p} \mu_Z(d\bm{z})  \\
+	&\le |f(0,0)|^{p} + \int_{\R^{n}_{+}} L_f^{p} \|(\bm{x},\bm{z})\|^{p} \mu_Z(d\bm{z}) \\
+	&\le |f(0,0)|^{p} + L_f^{p} \int_{\R^{n}_{+}} \|\bm{x}\|^{p} + \|\bm{z}\|^{p} \mu_Z(d\bm{z}) \\
+	&= |f(0,0)|^{p} + L_f^{p} \|\bm{x}\|^{p} + L_f^{p} \int_{\R^{n}_{+}}\|\bm{z}\|^{p} \mu_Z(d\bm{z}) < \infty
     ,\end{align*}
     as $\mu_Z$ has finite moments of order $p$.
-    Then, $\forall x,x'\ge 0$,
+    Then, for any $\bm{x},\bm{x}' \in \R^{m}_{+}$,
     \begin{align*}
-        \|F(x) - F(x')\|_{p} &= \left( \int_{\R^{+}} |f(x',z) - f(x,z)|^{p}\mu_Z(dz) \right)^{1 / p} \\ 
-	&\le \left( \int_{\R^{+}} L_f^{p} |x - x'|^{p}\mu_Z(dz) \right)^{1 / p} = L_f |x-x'|
+        \|F(\bm{x}) - F(\bm{x}')\|_{p} &= \left( \int_{\R^{n}_{+}} |f(\bm{x},\bm{z}) - f(\bm{x}',\bm{z})|^{p}\mu_Z(d\bm{z}) \right)^{1 / p} \\ 
+	&\le \left( \int_{\R^{n}_{+}} \left( L_f \|(\bm{x},\bm{z}) - (\bm{x}',\bm{z})\| \right)^{p}\mu_Z(d\bm{z}) \right)^{1 / p} =  L_f \|\bm{x}-\bm{x}'\|
     .\end{align*}
 \end{proof}
+
+\subsubsection*{Continuity and Existence of Solutions}
+
+Let us assume once again that $\mathcal{R}$ is convex and monotonic.
+Then, because $L^{p}(\Omega,\mathcal{F},\mathbb{P})$ is a Banach lattice under the $L^{p}$-norm, we can use \citet[Theorem~4.1]{cheriditoRiskMeasuresOrlicz2009} to see that $\mathcal{R}$ is locally Lipschitz continuous.
+Thus, by Lemma~\ref{lemma:F-lip-cont}, $\mathcal{R} \circ F$ is also locally Lipschitz continuous on $\R^{m}_{+}$, which grants us that \eqref{eq:multiprod-bis-prob} is solvable, as any feasible solution has finite cost\footnote{Note that the set of feasible solutions is a compact subset of the domain of $F$.}.
+I will make these results tangible for the three risk measures chosen.
+
+\begin{lemma}[\citet{burtscheidtRiskAverseModelsBilevel2019}, Theorem~3.4]\label{eq:lip-cont-E}
+    If $\mu_Z$ has finite moments of order $p=1$, then $\mathcal{R}_{\mathbb{E}} = \mathbb{E}$ is real-valued and Lipschitz continuous.
+\end{lemma}
+\begin{proof}
+    This proof is very similar to the proof of Lemma~\ref{lemma:F-lip-cont}.
+    First, for any $\bm{x}\in \R^{n}_+$,
+    \begin{align*}
+	|\mathcal{R}_{\mathbb{E}}[F(\bm{x})]| &= |\mathbb{E}[f(\bm{x},Z)]| \le \int_{\R^{n}_+} |f(\bm{x},\bm{z})| \mu_Z(d\bm{z}) \\
+	&\le |f(0,0)| + L_f \| \bm{x} \| + L_f \int_{\R^{n}_+} \|\bm{z}\| \mu_Z(d\bm{z}) < \infty
+    .\end{align*}
+
+    Now, for any $\bm{x},\bm{x}'\in \R^{m}_+$,
+    \begin{align*}
+	|\mathcal{R}_\mathbb{E}[F(\bm{x})] - \mathcal{R}_\mathbb{E}[F(\bm{x}')]| &= \left| \int_{\R^{n}_+} \left( f(\bm{x},\bm{z}) - f(\bm{x}',\bm{z}) \right) \mu_Z(d\bm{z}) \right|  \\
+	&\le \int_{\R^{n}_+} |f(\bm{x},\bm{z}) - f(\bm{x}',\bm{z})| \mu_Z(d\bm{z}) \\
+	&= L_f \|\bm{x} - \bm{x}'\|
+    .\end{align*}
+\end{proof}
+
+The case for the conditional value-at-risk is more intricate.
+Let \[
+    \text{CVaR}_\alpha[Y] = \min_{t\in \R} t + \frac{1}{1-\alpha} \mathbb{E}[\max\{Y-t,0\}]
+\] for any $Y \in L^{1}(\Omega,\mathcal{F},\mathbb{P})$.
+Then,
+\begin{align*}
+    \mathcal{R}_{\text{CVaR}_\alpha}[F(\bm{x})] &= \text{CVaR}_\alpha[F(\bm{x})] = \min_{t\in \R} t + \frac{1}{1-\alpha} \mathbb{E}[\max\{F(\bm{x})-t,0\}] \\
+    &= \min_{t\in \R} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} \max\{f(\bm{x},\bm{z})-t,0\} \mu_Z(d\bm{z}) \\
+    &= \min_{t\in \R} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} g(\bm{z}) \mu_Z(d\bm{z}) \\
+    &\quad\quad \text{s.t.} \quad f(\bm{x},\bm{z}) - g(\bm{z}) \le t,\, \text{a.s.} \\
+    &\quad\quad \quad \quad g(\bm{z}) \ge 0,\, \text{a.s.}
+.\end{align*}
+Therefore, specifically showing that $\mathcal{R}_{\text{CVaR}_\alpha}$ is real-valued is equivalent to saying that the above optimization problem over a function space is solvable, which has been shown in \citet[Chapter~6.2.4]{shapiroLecturesStochasticProgramming2009}.
+In fact, it is shown that indeed the conditional value-at-risk is convex and monotonic and, thus, falls into the category of risk measures discussed earlier.
+
+Finally, the value-at-risk, which is \emph{not} convex, needs a special treatment.
+
 
 
 
