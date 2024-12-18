@@ -350,11 +350,24 @@ Let \[
 Then,
 \begin{align*}
     \mathcal{R}_{\text{CVaR}_\alpha}[F(\bm{x})] &= \text{CVaR}_\alpha[F(\bm{x})] = \min_{t\in \R} t + \frac{1}{1-\alpha} \mathbb{E}[\max\{F(\bm{x})-t,0\}] \\
-    &= \min_{t\in \R} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} \max\{f(\bm{x},\bm{z})-t,0\} \mu_Z(d\bm{z}) \\
-    &= \min_{t\in \R} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} g(\bm{z}) \mu_Z(d\bm{z}) \\
-    &\quad\quad \text{s.t.} \quad f(\bm{x},\bm{z}) - g(\bm{z}) \le t,\, \text{a.s.} \\
-    &\quad\quad \quad \quad g(\bm{z}) \ge 0,\, \text{a.s.}
-.\end{align*}
+    &= \min_{t} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} \max\{f(\bm{x},\bm{z})-t,0\} \mu_Z(d\bm{z}) \\
+    &= \min_{t, g(\bm{z})} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} g(\bm{z}) \mu_Z(d\bm{z}) \\
+    &\quad\quad \text{s.t.} \quad g(Z) + t \ge f(\bm{x},Z),\, \text{a.s.} \\
+    &\quad\quad \quad \quad g(Z) \ge 0,\, \text{a.s.}
+,\end{align*}
+that is, the properties of $\mathcal{R}_{\text{CVaR}_\alpha}$ can be shown from the study of the above parametric optimization problem.
+Note that the above problem is linear and that the parameter appears only on the right-hand side of the constraints.
+Thus, if $Z$ has finite support, \citep[Theorem~2.1]{pistikopoulosMultiparametricOptimizationControl2021} shows that the objective is continuous, convex, and piecewise affine with respect to $f(\bm{x},\overline{\bm{z}}),\,\forall \overline{\bm{z}}\in \text{supp}(\mu_Z)$.
+Because $f$ is Lipschitz continuous on $\bm{x}$, then $\mathcal{R}_{\text{CVaR}_\alpha} \circ F$ is also Lipschitz continuous.
+Intuitively, note that as one smoothly varies $\bm{x}$, $f(\bm{x},Z)$ also changes smoothly, which smoothly contracts or expands the polyhedron that defines the set of feasible solutions to the problem, which, in turn, implies that the optimal objective value varies smoothly with respect to $\bm{x}$.
+% In fact, because $f(\bm{x},Z)$ is on the right-hand side of the constraints, the contraction/expansion happens such that each facet moves orthogonally to its surface.
+
+If $Z$ has infinite support, the problem becomes an optimization problem over a functional space (i.e., $L^{1}(\Omega,\mathcal{F},\mathbb{P})$).
+Although the intuition still holds, to the best of my knowledge no one has shown that the problem
+
+\textcolor{red}{\textbf{TODO}}
+
+If $Z$ has finite support, then the 
 Therefore, specifically showing that $\mathcal{R}_{\text{CVaR}_\alpha}$ is real-valued is equivalent to saying that the above optimization problem over a function space is solvable, which has been shown in \citet[Chapter~6.2.4]{shapiroLecturesStochasticProgramming2009}.
 In fact, it is shown that indeed the conditional value-at-risk is convex and monotonic and, thus, falls into the category of risk measures discussed earlier.
 
