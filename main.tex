@@ -20,16 +20,16 @@
 \section*{Introduction}
 
 Bilevel stochastic problems can be seen as a generalization of the two-stage problems we have seen in class.
-In both cases, there are two decisions to be made: one before and another after the realization of a random variable.
+In both cases, there are two decisions to be made, before and after the realization of a random variable.
 The difference lies in that bilevel stochastic programming does \emph{not} assume that both decisions are made by the same agent.
 In turn, this difference leads to a bilevel problem because the two stages do not share the same objective.
 
 The properties of bilevel stochastic linear problems have been studied in the foundational works by \citet{burtscheidtRiskAverseModelsBilevel2020} and \citet{clausExistenceSolutionsClass2022a,clausContinuityRiskaverseBilevel2021}.
 The authors consider the more general risk-averse scenario, for which the risk-neutral case becomes a particular instance.
 They have presented proofs of the existence of optima and even optimality conditions for (classes of) bilevel problems in which the random variable appears in the right-hand side of the lower level~\citep{burtscheidtRiskAverseModelsBilevel2020}, in the lower level cost function~\citep{clausContinuityRiskaverseBilevel2021} in a quadratic manner, or in both~\citep{clausExistenceSolutionsClass2022a}.
-Although those are solid results, their interpretation and applicability is not easy to grasp, as they are proposed for abstract problem classes and assume intricate properties from the components of the mathematical programming models (e.g., constraint functions, solution space, objective function).
+Although those are solid results, their interpretation and applicability is not easy to grasp, as they are proposed for abstract problem classes and assume intricate properties from the components of the mathematical programming models (constraint functions, solution space, objective function, etc.).
 
-The overarching goal of this project is to deeper the understanding of the theoretical results for bilevel stochastic linear problems.
+The overarching goal of this project is to deepen the understanding of the theoretical results for bilevel stochastic linear problems.
 The proposed approach is to explore the implications of these results for two classic textbook examples: the newsvendor problem and the multiproduct assembly problem.
 By proposing a bilevel variant of those problems and studying their theoretical properties following \citet{burtscheidtRiskAverseModelsBilevel2020}, I expect to make those results tangible for risk-averse bilevel stochastic linear problems.
 Finally, I expect that those applications lead to a clear idea of which exact algorithms can be used to solve the proposed problems, reaching a practical conclusion.
@@ -53,11 +53,11 @@ in which
       & y,w \ge 0
 .\end{split}
 \end{equation}
-The decision variables $x$, $y$, and $w$ represent, respectively, the amount of newspaper initially bought, the amount of newspaper sold, and the amount of newspaper returned $w$.
-The problem is parameterized by the acquisition cost $c$, the newspaper capacity $u$, the demand $z$, the selling price $q$, and the return price $r$.
+The decision variables $x$, $y$, and $w$ represent, respectively, the amount of newspaper bought, the amount of newspaper sold, and the amount of newspaper returned.
+The problem is parameterized by the acquisition cost $c$, the storage capacity $u$, the demand $z$, the selling price $q$, and the return price $r$.
 
-The traditional two-stage formulation comes from assuming that the demand comes from a random variable $z=Z(\omega)$, where  $\omega$ belongs to a probability space $(\Omega, \mathcal{F},\mathbb{P})$.
-Furthermore, it is assumed that the realization of the random variable happens after the first decision (w.r.t. $x$), and before the second decision (w.r.t. $y$ and $w$).
+The traditional two-stage formulation comes from assuming that the demand is uncertain, and is modeled as a random variable $z=Z(\omega)$, where  $\omega$ belongs to a probability space $(\Omega, \mathcal{F},\mathbb{P})$.
+Furthermore, it is assumed that the realization of the random variable happens \emph{after} the first decision is made (w.r.t. $x$), but \emph{before} the second decision (w.r.t. $y$ and $w$).
 Then, given a risk measure $\mathcal{R}: \mathcal{X} \longrightarrow \R$, where $\mathcal{X}$ is a linear subspace of all $\mathcal{F}$-measurable random variables, the two-stage problem becomes
 \begin{equation}\label{eq:two-stage}
 \begin{split}
@@ -65,9 +65,9 @@ Then, given a risk measure $\mathcal{R}: \mathcal{X} \longrightarrow \R$, where 
     \textrm{s.t.} \quad & 0\le x\le u
 .\end{split}
 \end{equation}
-Note that if we assume that $\mathcal{R}$ is translation invariant, then $\mathcal{R}[c x + Q(x,Z)] = cx + \mathcal{R}[Q(x,Z)]$, which is true in the risk-neutral case $\mathcal{R} = \mathbb{E}$, but also for the value-at-risk and the conditional value-at-risk.
+Note that if we assume that $\mathcal{R}$ is translation invariant, then $\mathcal{R}[c x + Q(x,Z)] = cx + \mathcal{R}[Q(x,Z)]$, which is true for all three the risk measures of interest, nominally, the expected value, the value-at-risk, and the conditional value-at-risk.
 
-\subsection*{A Bilevel Variant}
+\subsection*{The Bilevel Variant}
 
 In this work, I will assume a slight variation of the original newsvendor problem in which the lower-level decision is made by a different agent, with a different objective.
 This may represent, for example, a scenario in which the newspaper acquisition is made by a middle-man, which has different selling and return margins than the newspaper salesperson. 
@@ -89,8 +89,8 @@ in which $\Psi(x,z)$ represents the set of solutions to the lower-level problem,
 \end{equation}
 Note that the costs differ, that is, the selling and returning costs for the upper level are $q_u$ and $r_u$, resp., while they are $q_l$ and $r_l$ for the lower level.
 
-There is, however, an analytic solution to the second stage~\citep{birgeIntroductionStochasticProgramming2011} that assumes the selling price is strictly higher than the return price.
-More precisely, assuming $q_l > r_l$, the optimal solution to \eqref{eq:newsvendor-ll} can be written
+However, the analytic solution to the second stage~\citep{birgeIntroductionStochasticProgramming2011} still holds, that is, as long as we assume that the selling price is strictly higher than the return price.
+More precisely, if $q_l > r_l$, the optimal solution to \eqref{eq:newsvendor-ll} can be written
 \begin{align}\label{eq:newsvendor-analytic-solution}
     y^{*}(x,z) &= \min\{x,z\} \\
     w^{*}(x,z) &= \max\{x-z, 0\}
@@ -102,22 +102,28 @@ Thus, the upper-level cost can be written
     f(x,z) = cx -q_u \min\{x,z\} - r_u \max\{x-z, 0\}
 .\end{equation}
 
-The difference arises, for example, if the second stage decision-maker does not have any incentive to sell the newspapers instead of returning them (e.g., no sales commision), in which case $q_l = r_l$ and the optimal solutions are
+A slight difference arises if the second stage decision-maker does not have any incentive to sell the newspapers instead of returning them (e.g., no sales commision), in which case $q_l = r_l$ and the optimal solutions are
 \begin{equation*}
 \begin{split}
     \Psi(x,z) &= \left\{ (y,w)\in \R^2_{+} : y+w = x, y\le z \right\} \\
 	      &= \left\{ (y,w)\in \R^2_{+} : y \in \left[ 0,z \right] , w = \max\{x-y,0\} \right\} 
 \end{split}
 .\end{equation*}
-Under the optimistic assumption, the solution that minimizes the upper-level cost is also \eqref{eq:newsvendor-analytic-solution}, as it is a feasible solution that achieves the optimal cost for the lower-level.
+Nonetheless, under the optimistic assumption, the solution that minimizes the upper-level cost\footnote{It is implicitly assumed that $q_U > r_U$. However, if that is not the case, it is easy to see that an even simpler analytical solution exists, for which the same results apply.} is also \eqref{eq:newsvendor-analytic-solution}, as it is a feasible solution that achieves the optimal cost for the lower-level.
 
-Let us consider now the extreme case $q_l < r_l$, for example, the sales commission is inferior to the cost of selling, implying that simply returning the newspaper is the more profitable choice.
+For completion, let us now consider the extreme case $q_l < r_l$, arising, for example, if the sales commission is not sufficiently higher than the cost of selling the newspapers, implying that simply returning the newspaper is the more profitable choice.
 Thus, the optimal solution is simply $y^{*}=0$ and $w^{*}=x$, $\forall x,z\ge 0$, which is completely independent of the actual demand.
-The upper-level cost becomes $f(x,z) = (c - r_u) x$, which, of course, has an optimal solution at  $x=0$\footnote{That is, assuming $c< r_u$, a purchase cost smaller than the return cost, as the opposite would be nonsensical given the problem's context.}.
+The upper-level cost becomes $f(x,z) = (c - r_u) x$, which, of course, has $x=0$ as an optimal solution\footnote{That is, assuming $c< r_u$, a purchase cost smaller than the return cost, as the opposite would be nonsensical in the problem's context.}.
 
-At this point, it would be natural to investigate the domain of $f(x,z)$ and its continuity properties.
-It is clear in all scenarios that $\text{dom} f = \R^{2}_{+}$, as that renders both lower-level and the upper-level feasible, i.e., the problem has a property similar to relative complete recourse.
-For $q_l \ge r_l$, Eq. \eqref{eq:newsvendor-analytic-ul-cost} shows that the upper-level cost function is continuously differentiable almost everywhere with respect to the Lebesgue measure, that is, $f$ has continuous derivatives except at $\left\{ (x,z) \in \R^2_{+} : x = z \right\}$, which has null Lebesgue measure.
+At this point, it is natural to investigate the domain of $f(x,z)$ and its continuity properties.
+It is clear in all scenarios that $\text{dom} f = \R^{2}_{+}$, as that renders both lower-level and the upper-level feasible.
+Note that the feasible space of the first-stage feasible set here lies within the domain of $f$ (when projected into the $x$ dimension).
+Therefore, any upper-level feasible assignment for $x$ and $z$ renders the lower-level feasible, a property similar to relative complete recourse.
+In fact, if we consider that $Z(\omega) \in \R_{+} \forall \omega \in \Omega$, which is completely within the problem's context, we can even say that the problem has complete recourse.
+
+Another interesting property to investigate is the differentiability of $f$.
+For $q_l \ge r_l$, Eq. \eqref{eq:newsvendor-analytic-ul-cost} shows that the upper-level cost function is continuously differentiable almost everywhere with respect to the Lebesgue measure.
+This is due to $f$ having continuous derivatives at the entirety of its domain, except for points in $\left\{ (x,z) \in \R^2_{+} : x = z \right\}$, which has null Lebesgue measure.
 
 
 \subsection*{The Bilevel Stochastic Newsvendor}
@@ -131,9 +137,10 @@ As for the two-stage problem, given a random demand $Z$ and a risk measure $\mat
 \end{equation}
 where $F(x)=f(x,Z)$ is a random variable parameterized by the upper-level decision $x$.
 
-I recall that the only case worth investigating here is $q_l \ge r_l$, as otherwise the problem is demand independent, and for that case, the changes from the two-stage variant problem are negligible.
-Nevertheless, before we dive in the properties of the random variable $F(x)$ and the cost function $\mathcal{R}[F(x)]$, it is necessary to lay out some definitions about $Z$.
+I recall that the only case worth investigating here is $q_l \ge r_l$, as otherwise the problem is demand independent.
+For the case of interest, the changes from the two-stage variant are negligible, but I nonetheless proceed for completion.
 
+Before diving in the properties of the random variable $F(x)$ and the cost function $\mathcal{R}[F(x)]$, it is necessary to lay out some definitions about $Z$.
 Let $\mu_Z$ be the Borel probability measure induced by $Z$.
 This means that, in face of the probability space $\left( \Omega,\mathcal{F},\mathbb{P} \right)$, the probability that $\mu_Z$ associates to a given set $\left\{ z_1,z_2,\ldots \right\} $ of demand values is equal to the probability of the subset of $\Omega$ that contains the respective realization values. 
 In other words, if $\left\{ \omega_1,\omega_2,\ldots \right\}\in \Omega$ is such that $z_i=Z(\omega_i)$, for each $i=1,2,\ldots$, then $\mu_Z(\left\{ z_1,z_2,\ldots \right\} = \mathbb{P}\left\{ \omega_1,\omega_2,\ldots \right\}$.
@@ -142,14 +149,14 @@ In the following, I will always assume that $\mu_Z$ has finite moments of order 
     \mathbb{E}[|Z|^{p}] = \int_{\R_{+}} |z|^{p} \mu_Z(dz) < \infty
 .\]
 
-It is easy to see that $F(x)$ is Lipschitz continuous.
+It is easy to see that $F(x)$ is Lipschitz continuous, that is, there exists $L>0$ such that $\|F(x)-F(x')\| \le L |x-x'|$ for any $x,x'\ge 0$.
 In fact, $F(x)$ is also convex, as for any realization $Z(\omega)$, \[
     f(x,Z(\omega)) = \begin{cases}
 	(c-r)x - (q-r)Z(\omega) &,\, x \ge Z(\omega) \\
 	(c-q)x &,\, x < Z(\omega) \\
     \end{cases}
 \] and $(c-q) \ge (c-r)$, i.e., the slope of $f(x,Z(\omega))$ increases with $x$ for any $\omega \in \Omega$.
-Furthermore, we can see that $\forall x\ge 0$, $\mu_{F(x)}$ has finite moments of order $p\in [1,\infty)$, as $|f(x,z)| \le (c-r)x$, which leads to
+Furthermore, given that $\mu_Z$ has finite moments of order $p \in [1,\infty)$, we can see that $\forall x\ge 0$, $\mu_{F(x)}$, the probability measure induced by $F(x)$, also has finite moments of order $p$, as $|f(x,z)| \le (c-r)x$, which leads to
 \begin{align*}
     \mathbb{E}[|F(x)|^{p}] &= \mathbb{E}[|f(x,Z)|^{p}] = \int_{\R_{+}} |f(x,z)|^{p} \mu_Z(dz) \\
     &\le  (c-r)^{p} x^{p} \int_{\R_{+}} \mu_Z(dz) < \infty
@@ -161,11 +168,15 @@ Then, for any $x,x'>0$, and any $t\in [0,1]$, we use the convexity of $F(x)$ and
     \mathcal{R}[F(tx + (1-t)x')] \le \mathcal{R}[tF(x) + (1-t)F(x')]
 ,\] which, because $\mathcal{R}$ is also convex, shows that $\mathcal{R} \circ F$ is also convex.
 Now, by \citep[Proposition~6.5]{shapiroLecturesStochasticProgramming2009}, we know that if $\mathcal{R}$ is convex and monotonic, it will be continuous and subdifferentiable on $L^{p}\left( \Omega, \mathcal{F},\mathbb{P} \right)$.
-This, together with the previous result that $F(x)$ is Lipschitz continuous and that its domain ($\R_+$) is compact, leads us to applying \citet[Theorem~6.10]{shapiroLecturesStochasticProgramming2009} to see that $\mathcal{R} \circ F$ is directionally differentiable and its derivative has finite values.
-Therefore, gradient-based methods are exact algorithms for this problem and will (likely) return globally optimal solutions.
+This, together with the previous result that $F(x)$ is Lipschitz continuous and that its domain ($\R_+$) is compact, leads us to applying \citet[Theorem~6.10]{shapiroLecturesStochasticProgramming2009} to see that $\mathcal{R} \circ F$ is directionally differentiable in its domain and the derivatives have finite value.
+Although the proof is a bit intricate, the rough idea is that this differentiability comes from both $\mathcal{R}$ and $F(x)$ being directionally differentiable at $F(\overline{x})$ and $\overline{x}$, resp., for any $\overline{x}>0$.
+
+Having access to directional derivatives gives us the possibility of stating optimality conditions, as a local optima implies, and is implied by, having null derivatives in all directions.
+Furthermore, having directional derivatives in the entirety of the domain enables the use of gradient-based methods.
+In fact, since we have that $\mathcal{R} \circ F$ is convex, gradient-methods should always converge to the global optimum.
 
 Of course, the above results are unnecessary for the risk-neutral case $\mathcal{R}_{\mathbb{E}}= \mathbb{E}$, as one can much more easily derive analytical solutions (cf. \citet[Chapter~1.e]{birgeIntroductionStochasticProgramming2011} and \citet[Chapter~1.2.1]{shapiroLecturesStochasticProgramming2009}).
-On the other hand, the results are perfectly suitable for the case of the Conditional Value-at-Risk, which follows in the general case due to the results of Proposition~\ref{prop:cvar}.
+On the other hand, the results are perfectly suitable for the case of the Conditional Value-at-Risk, which follows in the general case, as shown in Proposition~\ref{prop:cvar}.
 
 \begin{prop}[\citet{uryasevProbabilisticConstrainedOptimization2000}, Proposition~2]\label{prop:cvar}
     The Conditional Value-at-Risk \[
@@ -219,14 +230,14 @@ Thus, for $\alpha \in (0,1]$, we have
     &= \inf_{\eta}\left\{ \eta \in \R : \mathbb{P}[ f(x,Z) \le \eta] \ge \alpha  \right\} \\
     &= \inf_{\eta}\left\{ \eta \in [(c-q)x,(c-r)x] : \int_{((c-r)x - \eta) / (q-r)}^{\infty} \mu_Z(dz) \ge \alpha   \right\}
 ,\end{align*} 
-which, if we assume $Z$ has a smooth CDF, implies that $\text{VaR}_\alpha \circ F$ is differentiable through a simple application of the implicit function theorem\footnote{This is due to $\text{VaR}[F(x)]$ being formulated as a minimization (as the infimum is achieved) that is equivalent to solving $\int_{((c-r)x - \eta) / (q-r)}^{\infty} \mu_Z(dz) - \alpha = 0$.}.
+which, if we assume $Z$ has a smooth cumulative distribution function (CDF), implies that $\text{VaR}_\alpha \circ F$ is differentiable through a simple application of the implicit function theorem\footnote{This is due to $\text{VaR}[F(x)]$ being formulated as a minimization (as the infimum is achieved) that is equivalent to solving $\int_{((c-r)x - \eta) / (q-r)}^{\infty} \mu_Z(dz) - \alpha = 0$.}.
 
 
 \section*{The Multiproduct Assembly Problem}
 
-As in the preliminary report\footnote{In the preliminary report, I used $\bm{d}$ to refer to the problem parameter, which I here decided to use $\bm{z}$ for consistency with respect to the newsvendor problem.}, the multiproduct assembly problem is, here, as
+As in the preliminary report\footnote{In the preliminary report, I used $\bm{d}$ to refer to the problem parameter, which I here decided to use $\bm{z}$ for consistency with respect to the newsvendor problem.}, the multiproduct assembly problem is formulated
 \begin{align*}
-    \min_{\bm{x}} \quad & f(\bm{x},\bm{z}) = \bm{c}^{T} \bm{x} + Q(\bm{x}, \bm{z}) \\
+    \min_{\bm{x}} \quad & \bm{c}^{T} \bm{x} + Q(\bm{x}, \bm{z}) \\
     \textrm{s.t.} \quad & 0 \le \bm{x} \le \bm{u}
 ,\end{align*}
 in which
@@ -236,7 +247,7 @@ in which
       & \bm{y} \le \bm{z} \\
       & \bm{y}, \bm{w} \ge 0
 .\end{align*}
-Note here we have \emph{vector} decision variables $\bm{x}=(x_1,\ldots,x_m)$, $\bm{y}=(y_1,\ldots,y_{n})$, and $\bm{w}=(w_1,\ldots,w_m)$.
+In contrast to the newsvendor problem, here we have \emph{vector} decision variables $\bm{x}=(x_1,\ldots,x_m)$, $\bm{y}=(y_1,\ldots,y_{n})$, and $\bm{w}=(w_1,\ldots,w_m)$.
 Each $x_{j}$ and $w_j$ represent the amount of each part $j$ that was bought and that remained, resp., while each $y_{i}$ represents the amount of product $i$ that was assembled.
 The external parameters $\bm{z}=(z_1,\ldots,z_n)$ represent the demand for each of the $n$ products that can be assembled.
 Finally, at the first stage,  $\bm{c}$ and $\bm{u}$ are the acquisition cost and the storage capacity for the parts, and at the second stage $\bm{q}$ and $\bm{r}$ are the sales price of the products and the recycling price of the parts, while in $A=[a_{ij}]$, $a_{ij}$ is the amount of part $j$ required to build product $i$.
@@ -248,13 +259,13 @@ As for the newsvendor problem, if we assume an uncertain demand modeled as the r
     \textrm{s.t.} \quad & 0\le \bm{x}\le \bm{u}
 .\end{split}
 \end{equation}
-However, I highlight that, despite using the same notation, for the multiproduct assembly problem $Z(\omega)\in \R^{n}_{+}$.
+However, I highlight that, despite using the same notation, for the multiproduct assembly problem $Z(\omega)\in \R^{n}_{+}$, i.e., it can be seen as a vector-valued function.
 
 \subsection*{A Bilevel Variant}
 
-Once again, the consideration that the second-stage decision is made by a different agent is used to yield a bilevel problem.
+Once again, the consideration that the second-stage decision is made by a different agent is used to formulate a bilevel problem.
 In here, this may represent, for example, the dynamics between a supplier (first stage) and a manufacturer (second stage).
-The bilevel variant can be written
+The bilevel variant is written
 \begin{equation}\label{eq:multiproduct-ul}
 \begin{split}
     \min_{\bm{x}} \quad & f(\bm{x},\bm{z}) = \bm{c}^{T}\bm{x} + \min\left\{ -\bm{q}^{T}_u \bm{y} -\bm{r}^{T}_u \bm{w} : (\bm{y},\bm{w})\in \Psi(\bm{x},\bm{z}) \right\}  \\
@@ -271,8 +282,12 @@ in which
 .\end{split}
 \end{equation}
 
-For the multiproduct assembly problem there is no analytic solution such as the one for the newsvendor problem.
-Therefore, the first interesting property to analyse on the bilevel variant, even before introducing the random variable, is that of the continuity of function $f$.
+% As for the newsvendor problem, nonnegative values for $\bm{z}$ and $\bm{x}$ deem the lower-level feasible.
+% Since the feasible space of the upper level is contained in $\R^{m}_{+}$, we have that the problem is well-defined for every upper-level feasible solution, similar to having relatively complete recourse\footnote{Or just complete recourse if we consider that the counter-domain of $Z$ is $\R^{n}_{+}$, as was previously discussed.}.
+
+Because there is no analytic solution for the multiproduct assembly problem (such as the one for the newsvendor problem), the first interesting property to analyse on the bilevel variant, even before introducing the random variable, is that of the continuity of function $f$.
+With Lemma~\ref{lemma:f-lip-cont}, we guarantee the problem is well defined and, since the feasible solution space of the upper level is compact, the problem is solvable.
+
 \begin{lemma}[\citet{burtscheidtBilevelLinearOptimization2020}, Lemma~17.2.1]\label{lemma:f-lip-cont}
     Function $f$ is real-valued and Lipschitz continuous on $\R^{m+n}_{+}$.
 \end{lemma}
@@ -310,8 +325,8 @@ Therefore, the first interesting property to analyse on the bilevel variant, eve
 
 \subsection*{The Bilevel Stochastic Multiproduct Assembly}
 
-Knowing that the deterministic problem is solvable let's us wander into the stochastic version of the problem.
-Recall that it is assumed here, just as for the two-stage variant, that the demand is the realization of the random variable $Z$, which happens prior to the lower-level decision.
+Knowing that the deterministic problem is solvable lets us wander into the stochastic version of the problem.
+Recall that the parameter $\bm{z}$ (demand) is the realization of the random variable $Z$, which happens prior to the lower-level decision, but after the upper-level decision.
 Furthermore, I consider here a risk-averse problem, such that, given a risk measure $\mathcal{R}$ as previously, the problem of interest is
 \begin{equation}\label{eq:multiprod-bis-prob}
 \begin{split}
@@ -320,7 +335,7 @@ Furthermore, I consider here a risk-averse problem, such that, given a risk meas
 ,\end{split}
 \end{equation}
 where $F(\bm{x})=f(\bm{x},Z)$ is a random variable parameterized by the upper-level decision $\bm{x}$.
-Note that $F(\bm{x})$ is well-defined as any upper-level decision $\bm{x}\in \R^{m}_{+}$ renders the lower-level feasible.
+Note that $F(\bm{x})$ is well-defined as any upper-level decision $\bm{x}\in \R^{m}_{+}$ renders the lower-level feasible (complete recourse).
 
 As for the newsvendor problem, let $\mu_Z$ be the Borel probability measure induced by Z.
 I will assume that $\mu_Z$ has finite moments of order $p\in [1,\infty)$, i.e., $Z \in L^{p}(\Omega,\mathcal{F},\mathbb{P})$.
@@ -348,18 +363,16 @@ This allows me to state the Lipschitz continuity of the random variable $F(\bm{x
     .\end{align*}
 \end{proof}
 
-\subsubsection*{Continuity and Existence of Solutions}
+\subsection*{Continuity and Existence of Solutions}
 
 The discussion presented for the newsvendor problem is suitable for the more general multiproduct assembly problem as well.
-For us to show that the problem is solvable (and differentiable), we need just to show that the risk measures are convex and monotonic, as Lemma~\ref{lemma:F-lip-cont} guarantees us the remaining.
+For us to show that the problem is solvable we need just to show that the risk measures are convex and monotonic, as Lemma~\ref{lemma:F-lip-cont} guarantees us the remaining.
 Nevertheless, I will provide in the following a more in-depth discussion for the three risk measures at hand.
 
 % Let us assume once again that $\mathcal{R}$ is convex and monotonic.
 % Then, because $L^{p}(\Omega,\mathcal{F},\mathbb{P})$ is a Banach lattice under the $L^{p}$-norm, we can use \citet[Theorem~4.1]{cheriditoRiskMeasuresOrlicz2009} to see that $\mathcal{R}$ is locally Lipschitz continuous.
 % Thus, by Lemma~\ref{lemma:F-lip-cont}, $\mathcal{R} \circ F$ is also locally Lipschitz continuous on $\R^{m}_{+}$, which grants us that \eqref{eq:multiprod-bis-prob} is solvable, as any feasible solution has finite cost\footnote{Note that the set of feasible solutions is a compact subset of the domain of $F$.}.
 % I will make these results tangible for the three risk measures chosen.
-
-For the risk-neutral case, Lemma~\ref{lemma:lip-cont-E} below provides the necessary conditions for subdifferentiability, which, in turn, allows us to use gradient-based methods.
 
 \begin{lemma}[\citet{burtscheidtRiskAverseModelsBilevel2019}, Theorem~3.4]\label{lemma:lip-cont-E}
     If $\mu_Z$ has finite moments of order $p=1$, then $\mathcal{R}_{\mathbb{E}} = \mathbb{E}$ is real-valued and Lipschitz continuous.
@@ -381,8 +394,8 @@ For the risk-neutral case, Lemma~\ref{lemma:lip-cont-E} below provides the neces
 \end{proof}
 
 The case for the conditional value-at-risk is more intricate.
-Generally, the results from Proposition~\ref{prop:cvar} still hold for the multiproduct assembly problem, guaranteeing that directional derivatives exist.
-If $Z$ has finite support, I present here an alternative demonstration of the results that comes through the reformulation of the $\text{CVaR}$ presented in \citet[Chapter~2.9]{birgeIntroductionStochasticProgramming2011}
+Generally, the results from Proposition~\ref{prop:cvar} apply to the multiproduct assembly problem, guaranteeing that directional derivatives exist.
+If $Z$ has \emph{finite support}, I present here an alternative demonstration of the results through the reformulation of the $\text{CVaR}$ presented in \citet[Chapter~2.9]{birgeIntroductionStochasticProgramming2011}
 \begin{align*}
     \text{CVaR}_\alpha[F(\bm{x})] &= \min_{t\in \R} t + \frac{1}{1-\alpha} \mathbb{E}[\max\{F(\bm{x})-t,0\}] \\
     &= \min_{t} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} \max\{f(\bm{x},\bm{z})-t,0\} \mu_Z(d\bm{z}) \\
@@ -391,22 +404,53 @@ If $Z$ has finite support, I present here an alternative demonstration of the re
     &\quad\quad \quad \quad g(Z) \ge 0,\, \text{a.s.}
 ,\end{align*}
 that is, the properties of $\mathcal{R}_{\text{CVaR}_\alpha}$ can be shown from the study of the above parametric optimization problem.
-\citep[Theorem~2.1]{pistikopoulosMultiparametricOptimizationControl2021} shows that the objective is continuous, convex, and piecewise affine with respect to $f(\bm{x},\overline{\bm{z}}),\,\forall \overline{\bm{z}}\in \text{supp}(\mu_Z)$.
+Because the problem above is clearly not degenerate\footnote{That is, for every possible $\bm{x}$ assignment, the optimal solution is unique and the vertex that yields it is not overdefined, i.e., the set of active constraints is also unique.}, \citep[Theorem~2.1]{pistikopoulosMultiparametricOptimizationControl2021} shows that the objective is continuous, convex, and piecewise affine with respect to $f(\bm{x},\overline{\bm{z}}),\,\forall \overline{\bm{z}}\in \text{supp}(\mu_Z)$.
 As a direct consequence, Lipschitz continuity of $f$ on $\bm{x}$ implies that $\mathcal{R}_{\text{CVaR}_\alpha} \circ F$ is also Lipschitz continuous.
-Intuitively, note that as one smoothly varies $\bm{x}$, $f(\bm{x},Z)$ also changes smoothly, which smoothly contracts or expands the polyhedron that defines the set of feasible solutions to the problem, which, in turn, implies that the optimal objective value varies smoothly with respect to $\bm{x}$.
+Intuitively, as one smoothly varies $\bm{x}$, $f(\bm{x},Z)$ also changes smoothly, which smoothly contracts or expands the polyhedron that defines the set of feasible solutions to the problem.
+This, in turn, leads to a smooth variation of the optimal objective value, once the problem is not degenerate.
 If $Z$ has infinite support, the problem becomes an optimization problem over a functional space (i.e., $L^{1}(\Omega,\mathcal{F},\mathbb{P})$).
 The intuition still holds, but, to the best of my knowledge, no one has shown that the above class of parametric problems is continuous with respect to the parameter, although the result seems achievable.
 
-Let me consider now the Value-at-Risk.
+The value-at-risk, which is \emph{not} convex, needs a special treatment.
+I recall once again that, by \citet[Theorem~2]{ivanovBilevelStochasticLinear2014}, $\text{VaR}_{\alpha}$ is a continuous risk measure on the image of our random variable.
+On top of that, since $f(\bm{x},\bm{z})$ is real-valued, then $F(\bm{x})$ is also real-valued\footnote{One could say that $F(\bm{x})$ is real-valued \emph{almost surely}, but I keep the understanding that the counter-domain of $Z$ is $\R^{m}_{+}$.}, and, thus, by the definition of the value-at-risk, $\text{VaR}_{\alpha}[F(\bm{x})]$ is also real-valued.
 
-If $Z$ has finite support, then the 
-Therefore, specifically showing that $\mathcal{R}_{\text{CVaR}_\alpha}$ is real-valued is equivalent to saying that the above optimization problem over a function space is solvable, which has been shown in \citet[Chapter~6.2.4]{shapiroLecturesStochasticProgramming2009}.
-In fact, it is shown that indeed the conditional value-at-risk is convex and monotonic and, thus, falls into the category of risk measures discussed earlier.
-
-Finally, the value-at-risk, which is \emph{not} convex, needs a special treatment.
+Therefore, for the three risk measures of interest we can guarantee that the problem is solved, as the feasible space is compact and the objective function is continuous and real-value.
 
 
+\subsection*{Exact Algorithms}
 
+Given the properties seen thus far, I will reduce the search for exact algorithms to the study of two key properties of our problem.
+The first is differentiability, which leads to optimality conditions and the use of gradient-based line search methods, even if those may just yield local optima.
+The second is convexity, which enables the use of methods that converge towards global optima, such as subgradient methods or cutting-planes, which do not require differentiability.
+
+
+% Given the properties seen thus far, the existence of exact algorithms for our problem can be boiled down to the study of two fundamental properties: differentiability and convexity.
+% Differentiability of our cost function enables the use of gradient-based line search methods such as steepest ascent, which even in the absence of convexity still guarantee to converge towards a local minima.
+% On the other hand, convexity enables the use of algorithms that converge towards global optima, such as subgradient decent or cutting-planes, which do not require differentiability.
+
+Differently from continuity, differentiability cannot be guaranteed simply through convexity and monotonicity of the risk measures.
+\citet[Proposition~17.2.13]{burtscheidtRiskAverseModelsBilevel2020} have provided sufficient conditions for the risk-neutral case to be differentiable, but those are \emph{not} satisfied by the multiproduct assembly problem.
+This is because they require that the random variable continuously affects \emph{every} lower-level constraint, and, thus, has a probability measure that is absolutely continuous with respect to the Lebesgue measure.
+Following the authors discussion in Remark~17.2.15, consider the extended random variable $Z'=(Z_1,Z_2)$ such that $Z_2=Z$, which puts the problem in the standard form (as per the aforementioned work).
+Note constraint $A^{T}\bm{y} + \bm{w} \le \bm{x}$ becomes $A^{T}\bm{y} + \bm{w} \le \bm{x} + Z_1$, but that implies $\mathbb{P}[Z_1=0]=1$, which leads to $\mu_{Z'}$ not being absolutely continuous with respect to the Lebesgue measure.
+Another way of framing that is that the results do not apply because the lower-level problem is only \emph{partially} random.
+For the two other risk measures, general results are unknown.
+
+However, convexity can be shown for special cases.
+Let us assume that the lower-level problem is not degenerate, that is, for every $\bm{x} \in \R^{m}_{+}$ and $\bm{z}\in \R^{n}_{+}$, the optimal solution is unique and it is uniquely determined by a combination of active constraints (the vertex is uniquely determined).
+This allows us to resort once again to parametric optimization theory, as \citep[Theorem~2.1]{pistikopoulosMultiparametricOptimizationControl2021} guarantees that $\Psi(\bm{x},\bm{z})$ is a continuous and piecewise affine function.
+Thus, the minimization in $f(\bm{x},\bm{z})$ is convex with respect to its parameters, which implies that $f$ is also convex.
+As a consequence, $F(x)$ is convex and, thus, given a convex and monotonic risk measure, $\mathcal{R} \circ F$ is convex.
+
+% For the risk-neutral case, Lemma~\ref{lemma:lip-cont-E} below provides the necessary conditions for subdifferentiability, which, in turn, allows us to use gradient-based methods.
+
+
+
+\section*{Conclusions}
+
+
+- For differentiability of the multiproduct assembly problem, maybe the results from Burtscheidt et al. 2019 could be applied, as they have looser assumptions than absolute continuity, but that would require a deeper investigation.
 
 
 
