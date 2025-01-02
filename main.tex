@@ -396,13 +396,15 @@ Nevertheless, I will provide in the following a more in-depth discussion for the
 The case for the conditional value-at-risk is more intricate.
 Generally, the results from Proposition~\ref{prop:cvar} apply to the multiproduct assembly problem, guaranteeing that directional derivatives exist.
 If $Z$ has \emph{finite support}, I present here an alternative demonstration of the results through the reformulation of the $\text{CVaR}$ presented in \citet[Chapter~2.9]{birgeIntroductionStochasticProgramming2011}
-\begin{align*}
+\begin{equation}\label{eq:cvar-expansion}
+\begin{split}
     \text{CVaR}_\alpha[F(\bm{x})] &= \min_{t\in \R} t + \frac{1}{1-\alpha} \mathbb{E}[\max\{F(\bm{x})-t,0\}] \\
     &= \min_{t} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} \max\{f(\bm{x},\bm{z})-t,0\} \mu_Z(d\bm{z}) \\
     &= \min_{t, g(\bm{z})} t + \frac{1}{1-\alpha} \int_{\R^{n}_+} g(\bm{z}) \mu_Z(d\bm{z}) \\
     &\quad\quad \text{s.t.} \quad g(Z) + t \ge f(\bm{x},Z),\, \text{a.s.} \\
     &\quad\quad \quad \quad g(Z) \ge 0,\, \text{a.s.}
-,\end{align*}
+,\end{split}
+\end{equation}
 that is, the properties of $\mathcal{R}_{\text{CVaR}_\alpha}$ can be shown from the study of the above parametric optimization problem.
 Because the problem above is clearly not degenerate\footnote{That is, for every possible $\bm{x}$ assignment, the optimal solution is unique and the vertex that yields it is not overdefined, i.e., the set of active constraints is also unique.}, \citep[Theorem~2.1]{pistikopoulosMultiparametricOptimizationControl2021} shows that the objective is continuous, convex, and piecewise affine with respect to $f(\bm{x},\overline{\bm{z}}),\,\forall \overline{\bm{z}}\in \text{supp}(\mu_Z)$.
 As a direct consequence, Lipschitz continuity of $f$ on $\bm{x}$ implies that $\mathcal{R}_{\text{CVaR}_\alpha} \circ F$ is also Lipschitz continuous.
@@ -433,11 +435,11 @@ Differently from continuity, differentiability cannot be guaranteed simply throu
 \citet[Proposition~17.2.13]{burtscheidtRiskAverseModelsBilevel2020} have provided sufficient conditions for the risk-neutral case to be differentiable, but those are \emph{not} satisfied by the multiproduct assembly problem.
 This is because they require that the random variable continuously affects \emph{every} lower-level constraint, and, thus, has a probability measure that is absolutely continuous with respect to the Lebesgue measure.
 Following the authors discussion in Remark~17.2.15, consider the extended random variable $Z'=(Z_1,Z_2)$ such that $Z_2=Z$, which puts the problem in the standard form (as per the aforementioned work).
-Note constraint $A^{T}\bm{y} + \bm{w} \le \bm{x}$ becomes $A^{T}\bm{y} + \bm{w} \le \bm{x} + Z_1$, but that implies $\mathbb{P}[Z_1=0]=1$, which leads to $\mu_{Z'}$ not being absolutely continuous with respect to the Lebesgue measure.
-Another way of framing that is that the results do not apply because the lower-level problem is only \emph{partially} random.
+Note constraint $A^{T}\bm{y} + \bm{w} \le \bm{x}$ becomes $A^{T}\bm{y} + \bm{w} \le \bm{x} + Z_1$, but at the same time $\mathbb{P}[Z_1=0]=1$, which leads to $\mu_{Z'}$ not being absolutely continuous with respect to the Lebesgue measure, that is, the random variable does not continuously affect the constraint.
+% Another way of framing that is that the results do not apply because the lower-level problem is only \emph{partially} random.
 For the two other risk measures, general results are unknown.
 
-However, convexity can be shown for special cases.
+However, convexity can be shown for a special case.
 Let us assume that the lower-level problem is not degenerate, that is, for every $\bm{x} \in \R^{m}_{+}$ and $\bm{z}\in \R^{n}_{+}$, the optimal solution is unique and it is uniquely determined by a combination of active constraints (the vertex is uniquely determined).
 This allows us to resort once again to parametric optimization theory, as \citep[Theorem~2.1]{pistikopoulosMultiparametricOptimizationControl2021} guarantees that $\Psi(\bm{x},\bm{z})$ is a continuous and piecewise affine function.
 Thus, the minimization in $f(\bm{x},\bm{z})$ is convex with respect to its parameters, which implies that $f$ is also convex.
@@ -445,6 +447,32 @@ As a consequence, $F(x)$ is convex and, thus, given a convex and monotonic risk 
 
 % For the risk-neutral case, Lemma~\ref{lemma:lip-cont-E} below provides the necessary conditions for subdifferentiability, which, in turn, allows us to use gradient-based methods.
 
+
+\subsection*{Finite Discrete Distributions}
+
+In here, I will assume that the random variable $Z$ has a finite number of realizations $Z_1,\ldots,Z_K$.
+To simplify the notation, I will write $\pi_k=\mathbb{P}[Z=Z_k]$, for $k=1,\ldots,K$.
+This assumption deeply facilitates the problem, as becomes clear in the risk-neutral case.
+The finite distribution of the random vector directly implies~\citep[Theorem 5.1]{burtscheidtBilevelLinearOptimization2020}
+\begin{align*}
+    \mathcal{R}_{\mathbb{E}}[F(\bm{x})] &= \sum_{k=1}^{K} \pi_k f(\bm{x},Z_k) \\
+    &= \bm{c}^{T}\bm{x} + \sum_{k=1}^{K} \pi_k \min_{\bm{y}_{k},\bm{w}_{k}}\left\{ -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} : (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) \right\} \\
+&= \bm{c}^{T}\bm{x} + \min_{\substack{\bm{y}_{1},\ldots,\bm{y}_{K} \\ \bm{w}_{1},\ldots,\bm{w}_{K}}}\left\{ \sum_{k=1}^{K} \pi_k (-\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k}) : (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k), k=1,\ldots,K \right\}
+.\end{align*}
+Similarly, the $K$ lower-level problems can be formulated as a single problem, which makes it even more evident that the problem can be solved as an optimistic bilevel linear problem.
+I opt to keep them separate to highlight its decomposition.
+
+For the conditional value-at-risk, I continue from \eqref{eq:cvar-expansion} to see that~\citep[Theorems 5.3 and 5.7]{burtscheidtRiskAverseModelsBilevel2019} \[
+    \mathcal{R}_{\text{CVaR}_{\alpha}}[F(\bm{x})] = \min_{t} t + \frac{1}{1-\alpha} \sum_{k=1}^{K} \pi_k \max\{f(\bm{x},Z_k),0\}
+\] 
+and, for $k=1,\ldots,K$,
+\begin{align*}
+    &\max\{f(\bm{x},Z_k),0\} \\
+    &\quad= \min_{\bm{g}_k} \{\bm{g}_k : \bm{g}_k \ge 0, \bm{g}_k+t \ge f(\bm{x},Z_k)\} \\
+&\quad= \min_{\bm{g}_k} \{\bm{g}_k : \bm{g}_k \ge 0, \bm{g}_k+t \ge \bm{c}^{T}\bm{x} + \min_{\bm{y}_k,\bm{w}_k}\left\{ -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} : (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) \right\} \} \\
+    &\quad= \min_{\bm{g}_k,\bm{y}_{k},\bm{w}_{k}} \{\bm{g}_k : \bm{g}_k \ge 0, \bm{g}_k+t \ge \bm{c}^{T}\bm{x} -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} , (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) \}
+.\end{align*}
+In other words, for the conditional value-at-risk the problem is reduced to a \emph{trilevel} linear problem, for which the lowest-level can be decomposed over the possible realizations of the random vector.
 
 
 \section*{Conclusions}
