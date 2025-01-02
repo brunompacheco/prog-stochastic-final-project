@@ -472,13 +472,59 @@ and, for $k=1,\ldots,K$,
 &\quad= \min_{\bm{g}_k} \{\bm{g}_k : \bm{g}_k \ge 0, \bm{g}_k+t \ge \bm{c}^{T}\bm{x} + \min_{\bm{y}_k,\bm{w}_k}\left\{ -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} : (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) \right\} \} \\
     &\quad= \min_{\bm{g}_k,\bm{y}_{k},\bm{w}_{k}} \{\bm{g}_k : \bm{g}_k \ge 0, \bm{g}_k+t \ge \bm{c}^{T}\bm{x} -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} , (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) \}
 .\end{align*}
-In other words, for the conditional value-at-risk the problem is reduced to a \emph{trilevel} linear problem, for which the lowest-level can be decomposed over the possible realizations of the random vector.
+In other words, for the conditional value-at-risk, the problem is also reduced to a bilevel linear problem, for which the lower-level can be decomposed over the possible realizations of the random vector.
+
+For the value-at-risk, we have that~\citep[Proposition 17.2.26]{burtscheidtRiskAverseModelsBilevel2020}
+\begin{align*}
+    \mathcal{R}_{\text{VaR}_{\alpha}}[F(\bm{x})] &= \min_{\eta} \{ \eta \in \R : \mathbb{P}[F(\bm{x})\le \eta] \ge \alpha \} \\
+    &= \min_{\eta} \{ \eta \in \R : \mathbb{P}[f(\bm{x},Z)\le \eta] \ge \alpha \} \\
+    &= \min_{\eta} \{ \eta \in \R : \sum_{k=1}^{K} \pi_k 1[f(\bm{x},Z_k) \le \eta] \ge \alpha \} \\
+    &= \min_{\eta,\theta_1,\ldots,\theta_k} \eta  \\
+    &\quad\quad \text{s.t.} \quad \sum_{k=1}^{K} \pi_k \theta_k \ge \alpha \\
+    &\quad\quad \quad \quad M (1 - \theta_k) \ge f(\bm{x},Z_k) - \eta,\, k=1,\ldots,K \\
+    &\quad\quad \quad \quad \theta_1,\ldots,\theta_K \in \left\{ 0,1 \right\}  \\
+    &= \min_{\eta,\theta_1,\ldots,\theta_k} \eta  \\
+    &\quad\quad \text{s.t.} \quad \sum_{k=1}^{K} \pi_k \theta_k \ge \alpha \\
+    &\quad\quad \quad \quad M (1 - \theta_k) \ge \bm{c}^{T}\bm{x} + \min_{\bm{y}_k,\bm{w}_k}\left\{ -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} : (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) \right\} - \eta,\, k=1,\ldots,K \\
+    &\quad\quad \quad \quad \theta_1,\ldots,\theta_K \in \left\{ 0,1 \right\}  \\
+    &= \min_{\substack{\eta,\theta_1,\ldots,\theta_k \\ \bm{y}_1,\ldots,\bm{y}_K \\ \bm{w}_1,\ldots,\bm{w}_K}} \eta  \\
+    &\quad\quad \text{s.t.} \quad \sum_{k=1}^{K} \pi_k \theta_k \ge \alpha \\
+    &\quad\quad \quad \quad M (1 - \theta_k) \ge \bm{c}^{T}\bm{x} -\bm{q}^{T}_u \bm{y}_{k} -\bm{r}^{T}_u \bm{w}_{k} - \eta,\, k=1,\ldots,K \\
+    &\quad\quad \quad \quad (\bm{y}_{k},\bm{w}_{k})\in \Psi(\bm{x},Z_k) ,\, k=1,\ldots,K
+.\end{align*}
+Therefore, the value-at-risk induces a bilevel linear problem with mixed-integer variables.
+Although the binary variables only appear on the upper-level, the problem gains combinatorial complexity nonetheless.
 
 
 \section*{Conclusions}
 
+In this project, I explored the theoretical foundations for risk-averse bilevel stochastic linear problems.
+The proposed approach was to apply the results from foundational works \citep{burtscheidtRiskAverseModelsBilevel2020,burtscheidtRiskAverseModelsBilevel2019} to bilevel variants of two classic two-stage stochastic optimization textbook problems: the newsvendor and the multiproduct assembly problems.
+The variant I proposed came from slight modification of the original objective value, changing the decision-making paradigm, from a single decision-maker to two decision-makers with different objectives.
 
-- For differentiability of the multiproduct assembly problem, maybe the results from Burtscheidt et al. 2019 could be applied, as they have looser assumptions than absolute continuity, but that would require a deeper investigation.
+The newsvendor problem, due to its simplicity, served as a starting point, as a bridge between the results from two-stage stochastic programming to bilevel stochastic programming.
+In fact, the single non-trivial scenario of the bilevel newsvendor problem reduces exactly to a two-stage problem.
+Nonetheless, the core theoretical results were restated, with focus on existence of solutions and differentiability.
+These served as a reinforcement of the concepts seen during class, with an interesting extension to risk-averse scenarios using the conditional value-at-risk and the value-at-risk as risk measures.
+Finally, a particular case was considered (continuous CDF of the random variable) to show differentiability for the value-at-risk, for which there are no guarantees in the general case.
+
+Although the newsvendor problem did not yield any interesting results in bilevel stochastic programming theory, it introduced the discussion for the multiproduct assembly problem.
+The lack of a closed-form solution for this problem led me to rely entirely on the results from the seminal works, which were presented with extended proofs.
+More specifically, two key results presented in this work with extended discussion were Lemma~\ref{lemma:f-lip-cont} and Lemma~\ref{lemma:F-lip-cont}, which demonstrate continuity and boundedness of our target random variable and lead to the existence of solutions to the problem, once our risk measures of interest are well-behaved.
+
+The discussion, however, on exact algorithms for the multiproduct assembly problem was lacking.
+The original results~\citep[Proposition 17.2.13]{burtscheidtRiskAverseModelsBilevel2020} do not cover this problem, as the lower level (second decision) is not entirely random, that is, the random variable (demand) does not affect all constraints.
+It is possible that the more general results from \citet{burtscheidtRiskAverseModelsBilevel2019} prove more useful, but it unfortunately fell out of scope due to the amount of time available in face of the complexity of the proofs.
+I have included, however, a simple demonstration that a particular case of the problem is convex, which enables the use of convex programming exact algorithms such as cutting planes or subgradient.
+However, I do not believe such special case to be highly relevant in realistic problems.
+
+Overall, this project was very valuable to me, as it was an excellent opportunity to review in depth several concepts of stochastic programming seen during the course.
+In fact, I was even able to study further the three risk measures of interest and the impacts of key properties such as convexity and monotonicity.
+On top of that, parametric programming provided key tools for this work, which came to me as a bonus development.
+
+Finally, I can say that this project was a valuable challenge.
+The complete understanding of many of the results presented here was very demanding, both in terms of depth and in the extent of the required knowledge based, using tools from a wide range of areas related to mathematical programming.
+Thus, although not all objectives were fully achieved (e.g., exact algorithms for the multiproduct assembly problem), I am content with the results I take for myself, as the development of this work indeed implied in learning plenty.
 
 
 
